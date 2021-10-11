@@ -5,6 +5,6 @@ namespace Discoverer.Logic.Generator
 {
     public interface ILevelGenerator
     {
-        public Level Generate(GenerationSettings settings);
+        public Level Generate(GameSettings settings);
     }
 }

@@ -1,14 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Discoverer.Logic.CellContract;
 using Discoverer.Logic.GameContract;
+using Discoverer.Logic.GameContract.Actions;
+using Discoverer.Logic.GameContract.Commands;
+using Discoverer.Logic.GameContract.GameStates;
 using Discoverer.Logic.Generator;
+using Discoverer.Logic.Grid;
 using Discoverer.Logic.Grid.Hex;
 using Discoverer.Logic.Grid.Isometric;
+using Discoverer.Logic.Hints;
+using Discoverer.Logic.Process;
 using Discoverer.Logic.Settings;
 
 namespace Discoverer.ConsoleApp
 {
+    #nullable enable
     class Program
     {
         private static Dictionary<ETerrainType, ConsoleColor> colors = new()
@@ -35,36 +43,97 @@ namespace Discoverer.ConsoleApp
         static void Main(string[] args)
         {
             // TODO: Добавить тесты на основные алгоритмы
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            var generator = new LevelGenerator();
-            var level = generator.Generate(new GenerationSettings
+            var gameBuilder = new GameBuilder();
+            var game = gameBuilder.Create(new GameSettings
             {
                 GridType = EGridType.Hex,
-                Width = 12,
-                Height = 12,
-                PlayerCount = 5,
+                Width = 5,
+                Height = 5,
+                PlayerCount = 2,
             });
-
-            if (level.Grid.Type == HexGrid.GlobalType)
+            game.RunCommand(new StartGameCommand());
+            
+            while (true)
             {
-                DrawHex((level.Grid as HexGrid<Cell>).Cells);
+                Draw(game);
+
+                var possibleCommands = game.GetCurrentPossibleCommands();
+
+                var command = BuildCommand(possibleCommands, game.GetGridType());
+                if (command is null)
+                    continue;
+
+                if (!game.GetCommandPossibility(command))
+                {
+                    Console.WriteLine("Невозможно выполнить команду");
+                    continue;
+                }
+
+                var actions = game.RunCommand(command);
+
+                PrintActions(game.GetAllActions());
+            }
+
+            
+            Console.ReadLine();
+        }
+
+        static GameCommand? BuildCommand(List<Type> possibleCommands, EGridType gridType)
+        {
+            foreach (var possibleCommand in possibleCommands)
+            {
+                Console.WriteLine(possibleCommand.Name);
+            }
+
+            var commandString = Console.ReadLine();
+            var parts = commandString.Split(" ");
+            return parts[0] switch
+            {
+                "ask" => new AskQuestionCommand(int.Parse(parts[1]), gridType == EGridType.Hex 
+                    ? new HexCoordinate { X = int.Parse(parts[2]), Y = int.Parse(parts[3]) }
+                    : new IsometricCoordinate { X = int.Parse(parts[2]), Y = int.Parse(parts[3]) }),
+                "guess" => new MakeGuessCommand(gridType == EGridType.Hex 
+                    ? new HexCoordinate { X = int.Parse(parts[1]), Y = int.Parse(parts[2]) }
+                    : new IsometricCoordinate { X = int.Parse(parts[1]), Y = int.Parse(parts[2]) }),
+                "start" => new StartGameCommand(),
+                "put" when possibleCommands.Contains(typeof(PutImproperCellOnStartCommand)) => new PutImproperCellOnStartCommand(gridType == EGridType.Hex 
+                    ? new HexCoordinate { X = int.Parse(parts[1]), Y = int.Parse(parts[2]) }
+                    : new IsometricCoordinate { X = int.Parse(parts[1]), Y = int.Parse(parts[2]) }),
+                "put" when possibleCommands.Contains(typeof(PutImproperCellAfterFailCommand)) => new PutImproperCellAfterFailCommand(gridType == EGridType.Hex 
+                    ? new HexCoordinate { X = int.Parse(parts[1]), Y = int.Parse(parts[2]) }
+                    : new IsometricCoordinate { X = int.Parse(parts[1]), Y = int.Parse(parts[2]) }),
+                _ => null
+            };
+        }
+
+        static void Draw(GameProcess game)
+        {
+            if (game.GetGridType() == EGridType.Hex)
+            {
+                DrawHex(game.Hex.CellGrid.Cells, DrawCell);
+                DrawHex(game.Hex.CellStateGrid.Cells, DrawCellState);
+            
+                Console.WriteLine($"{game.Hex.Grail} [{string.Join(", ", game.GetHints())}]");
+
             }
             else
             {
-                DrawIsometric((level.Grid as IsometricGrid<Cell>).Cells);
+                DrawIsometric(game.Isometric.CellGrid.Cells, DrawCell);
+                DrawIsometric(game.Isometric.CellStateGrid.Cells, DrawCellState);
+            
+                Console.WriteLine($"{game.Isometric.Grail} [{string.Join(", ", game.GetHints())}]");
+
             }
-
-            Console.WriteLine($"{level.Grail} [{string.Join(", ", level.Hints)}]");
-
             //foreach (var (coord, hint) in hints)
             //{
             //    Console.WriteLine($"{coord} [{string.Join(", ", hint)}]");
             //}
 
-            Console.ReadLine();
         }
-
-        static void DrawIsometric(Cell[,] cells)
+        
+        static void DrawIsometric<T>(T[,] cells, Action<T> draw)
         {
             var (width, height) = (cells.GetLength(0), cells.GetLength(1));
             
@@ -81,7 +150,7 @@ namespace Discoverer.ConsoleApp
                 Console.Write($"{y:00}");
                 for (int x = 0; x < width; ++x)
                 {
-                    DrawCell(cells[x, y]);
+                    draw(cells[x, y]);
                     Console.Write(" ");
                 }
                 Console.WriteLine();
@@ -89,7 +158,7 @@ namespace Discoverer.ConsoleApp
             Console.WriteLine("Y");
         }
         
-        static void DrawHex(Cell[,] cells)
+        static void DrawHex<T>(T[,] cells, Action<T> draw)
         {
             var (width, height) = (cells.GetLength(0), cells.GetLength(1));
             
@@ -114,7 +183,64 @@ namespace Discoverer.ConsoleApp
                     Console.Write(" ");
                 for (int y = 0; y < height; ++y)
                 {
-                    DrawCell(cells[x, y]);
+                    draw(cells[x, y]);
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine("X");
+        }
+        
+        static void DrawIsometric2((Cell, CellState)[,] cells)
+        {
+            var (width, height) = (cells.GetLength(0), cells.GetLength(1));
+            
+            
+            Console.Write("  ");
+            for (int x = 0; x < width; ++x)
+            {
+                Console.Write($"{x:00} ");
+            }
+            Console.WriteLine("X");
+
+            for (int y = 0; y < height; ++y)
+            {
+                Console.Write($"{y:00}");
+                for (int x = 0; x < width; ++x)
+                {
+                    DrawCell(cells[x, y].Item1);
+                    Console.Write(" ");
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine("Y");
+        }
+        
+        static void DrawHex2((Cell, CellState)[,] cells)
+        {
+            var (width, height) = (cells.GetLength(0), cells.GetLength(1));
+            
+            Console.Write("  ");
+            for (int y = 0; y < height; y += 2)
+            {
+                Console.Write($"{y:00}  ");
+            }
+            Console.WriteLine();
+            
+            Console.Write("    ");
+            for (int y = 1; y < height; y += 2)
+            {
+                Console.Write($"{y:00}  ");
+            }
+            Console.WriteLine("Y");
+            
+            for (int x = 0; x < width; ++x)
+            {
+                Console.Write($"{x:00}");
+                if (x % 2 == 1)
+                    Console.Write(" ");
+                for (int y = 0; y < height; ++y)
+                {
+                    DrawCell(cells[x, y].Item1);
                 }
                 Console.WriteLine();
             }
@@ -157,6 +283,61 @@ namespace Discoverer.ConsoleApp
             //Console.Write(mapper[map[x, y]] + " ");
         }
         
+        static void DrawCellState(CellState cellState)
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Black;
+            if (cellState.ImproperCellForPlayer.HasValue)
+            {
+                Console.Write(cellState.ImproperCellForPlayer);
+            }
+            else
+            {
+                Console.Write(" ");
+            }
+            if (!cellState.PossibleCellForPlayers.IsEmpty)
+            {
+                Console.Write(cellState.PossibleCellForPlayers.Min());
+            }
+            else
+            {
+                Console.Write(" ");
+            }
+            //Console.ForegroundColor = ConsoleColor.White;
+            //Console.BackgroundColor = ConsoleColor.Black;
+            
+            //Console.Write(mapper[map[x, y]] + " ");
+        }
+
+        static void PrintActions(IEnumerable<GameAction> gameActions)
+        {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            var messages = gameActions.Select(action => action switch
+            {
+                GameStartedAction => "Игра началась",
+                PlayerPutImproperCellOnStartAction concreteAction 
+                    => $"Игрок {concreteAction.PlayerNum} отметил что в точке {concreteAction.Cell} нет объекта",
+                PlayerAskedQuestionAction concreteAction 
+                    => $"Игрок {concreteAction.AskingPlayerNum} задал вопрос игроку {concreteAction.AnsweringPlayerNum} по поводу точки {concreteAction.Cell}",
+                PlayerAnsweredToQuestionAction concreteAction
+                    => $"Игрок {concreteAction.AnsweringPlayerNum} ответил игроку {concreteAction.AskingPlayerNum} что точка {concreteAction.Cell} {(concreteAction.Answer ? "возможна" : "невозможна")}",
+                PlayerMadeGuessAction concreteAction 
+                    => $"Игрок {concreteAction.PlayerNum} предполагает что ответ в точке {concreteAction.Cell}",
+                PlayerAnsweredToGuessAction concreteAction 
+                    => $"Игрок {concreteAction.AnsweringPlayerNum} ответил игроку {concreteAction.AskingPlayerNum} что точка {concreteAction.Cell} {(concreteAction.Answer ? "возможна" : "невозможна")}",
+                PlayerPutImproperCellAfterFailAction concreteAction 
+                    => $"Игрок {concreteAction.PlayerNum} отметил что в точке {concreteAction.Cell} нет объекта",
+                PlayerWonAction concreteAction 
+                    => $"Игрок {concreteAction.PlayerNum} выиграл",
+                _ => throw new ArgumentException()
+            });
+
+            foreach (var message in messages)
+            {
+                Console.WriteLine(message);
+            }
+        }
+
         static void DrawCell2(Cell cell)
         {
             Console.ForegroundColor = ConsoleColor.White;

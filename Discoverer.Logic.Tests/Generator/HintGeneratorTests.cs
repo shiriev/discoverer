@@ -141,12 +141,12 @@ namespace Discoverer.Logic.Tests.Generator
         public void Generate_ForTestCases_ReturnCorrectCollection(
             int itemCount, int playerCount, Dictionary<EHint, int[]> hintPositions, (TestCoordinate, EHint[])[] expected)
         {
-            var gridMock = new Mock<IGrid<Cell, TestCoordinate>>();
-            gridMock.Setup(_ => _.Items).Returns(Enumerable.Range(0, itemCount).Select(_ => (new TestCoordinate { I = _}, new Cell())).ToArray());
-            var funcs = hintPositions.ToDictionary<KeyValuePair<EHint, int[]>, EHint, Func<IGrid<Cell, TestCoordinate>, TestCoordinate, bool>>(
+            var gridMock = new Mock<IGrid<Cell>>();
+            gridMock.Setup(_ => _.Items).Returns(Enumerable.Range(0, itemCount).Select(_ => (new TestCoordinate { I = _} as ICoordinate, new Cell())).ToArray());
+            var funcs = hintPositions.ToDictionary<KeyValuePair<EHint, int[]>, EHint, Func<IGrid<Cell>, ICoordinate, bool>>(
                 kv => kv.Key,
-                kv => ((grid, c) => kv.Value.Contains(c.I)));
-            var generator = new HintGenerator<TestCoordinate>(playerCount, funcs);
+                kv => ((grid, c) => kv.Value.Contains(((TestCoordinate)c).I)));
+            var generator = new HintGenerator(playerCount, funcs);
             
             var result = generator.Generate(gridMock.Object);
 

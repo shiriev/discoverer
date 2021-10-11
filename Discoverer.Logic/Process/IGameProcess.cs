@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Discoverer.Logic.CellContract;
+﻿using System;
+using System.Collections.Generic;
 using Discoverer.Logic.GameContract;
 using Discoverer.Logic.Grid;
 
@@ -7,26 +7,22 @@ namespace Discoverer.Logic.Process
 {
     public interface IGameProcess
     {
-        ProcessState SaveState();
+        GameCast SaveState();
 
-        void LoadState(ProcessState processState);
+        void LoadState(GameCast gameCast);
         
         List<GameAction> RunCommand(GameCommand command);
         
-        IGrid<bool, ICoordinate> GetPossibleCellsFor(Player player);
+        IGrid<bool> GetPossibleCellsFor(int playerNum);
         
         GameState GetGameState();
         
         List<GameAction> GetAllActions();
         
-        IGrid<(Cell, CellState), ICoordinate> GetGrid();
-        
-        Player GetCurrentPlayer();
+        int GetCurrentPlayer();
         
         int GetCurrentTurn();
         
-        List<Player> GetAllPlayers();
-        
-        List<GameCommand> GetCurrentPossibleCommands();
+        List<Type> GetCurrentPossibleCommands();
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Discoverer.Logic.Grid.Hex
 {
-    public class HexCoordinateRandom : ICoordinateRandom<HexCoordinate>
+    public class HexCoordinateRandom : ICoordinateRandom
     {
         private readonly Random _random;
         
@@ -16,9 +16,9 @@ namespace Discoverer.Logic.Grid.Hex
             _random = random;
         }
         
-        public HexCoordinate Next()
+        public ICoordinate Next()
         {
-            return new()
+            return new HexCoordinate
             {
                 X = _random.Next(0, _width),
                 Y = _random.Next(0, _height)

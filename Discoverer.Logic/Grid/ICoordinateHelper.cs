@@ -1,7 +1,9 @@
 ﻿namespace Discoverer.Logic.Grid
 {
-    public interface ICoordinateHelper<TCoord> where TCoord : ICoordinate
+    public interface ICoordinateHelper
     {
-        int CalculateDistance(TCoord a, TCoord b);
+        int CalculateDistance(ICoordinate a, ICoordinate b);
+
+        bool SamePoint(ICoordinate a, ICoordinate b);
     }
 }

@@ -2,22 +2,20 @@
 
 namespace Discoverer.Logic.Grid
 {
-    // TODO: Try make Grid non generic
     public interface IGrid<T>
     {
         string Type { get; }
-    }
-    
-    public interface IGrid<T, TCoord> : IGrid<T> where TCoord : ICoordinate
-    {
-        IEnumerable<(TCoord, T)> Items { get; }
+        
+        IEnumerable<(ICoordinate, T)> Items { get; }
         
         int Size { get; }
 
-        T Get(TCoord coord);
+        T Get(ICoordinate coord);
         
-        void Set(TCoord coord, T value);
+        void Set(ICoordinate coord, T value);
 
-        IEnumerable<(TCoord, T)> NearItems(TCoord coord, int distance = 1);
+        IEnumerable<(ICoordinate, T)> NearItems(ICoordinate coord, int distance = 1);
+
+        IGrid<T> Copy();
     }
 }

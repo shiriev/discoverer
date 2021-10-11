@@ -4,27 +4,29 @@ using Discoverer.Logic.Grid;
 
 namespace Discoverer.Logic.GameContract
 {
+    //TODO: Make ProcessState full immutable
+    //TODO: Rename class
     public record ProcessState(
         List<GameAction> Actions,
         IGrid<CellState> CellStateGrid,
-        List<Player> Players,
-        Guid CurrentPlayerId,
+        int CurrentPlayerNum,
         int CurrentTurn,
         GameState GameState,
+        int PlayerCount,
         Guid GameId)
     {
 
         public ProcessState Set(ProcessUpdate update)
         {
-            return new ProcessState
+            return new
             (
                 Actions: update.Actions ?? Actions,
                 CellStateGrid: update.CellStateGrid ?? CellStateGrid,
-                Players: update.Players ?? Players,
-                CurrentPlayerId: update.CurrentPlayerId ?? CurrentPlayerId,
+                CurrentPlayerNum: update.CurrentPlayerNum ?? CurrentPlayerNum,
                 CurrentTurn: update.CurrentTurn ?? CurrentTurn,
                 GameState: update.GameState ?? GameState,
-                GameId: update.GameId ?? GameId
+                GameId: GameId,
+                PlayerCount: PlayerCount
             );
         }
     }

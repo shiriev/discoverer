@@ -1,4 +1,4 @@
 ﻿namespace Discoverer.Logic.GameContract.Actions
 {
-    public record PlayerWonAction(Player Player) : GameAction;
+    public record PlayerWonAction(int PlayerNum) : GameAction;
 }

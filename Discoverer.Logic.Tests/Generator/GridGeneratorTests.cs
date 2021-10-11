@@ -11,10 +11,11 @@ namespace Discoverer.Logic.Tests.Generator
 {
     public class GridGeneratorTests
     {
+        // TODO: Refactor test
         [Test]
         public void Generate_DoesntThrow()
         {
-            var coordinateRandomMock = new Mock<ICoordinateRandom<TestCoordinate>>();
+            var coordinateRandomMock = new Mock<ICoordinateRandom>();
             coordinateRandomMock.SetupSequence(_ => _.Next())
                 .Returns(new TestCoordinate { I = 0 })
                 .Returns(new TestCoordinate { I = 1 })
@@ -36,36 +37,36 @@ namespace Discoverer.Logic.Tests.Generator
                 .Returns(new TestCoordinate { I = 7 })
                 .Returns(new TestCoordinate { I = 8 })
                 .Returns(new TestCoordinate { I = 9 });
-            var coordinateHelperMock = new Mock<ICoordinateHelper<TestCoordinate>>();
+            var coordinateHelperMock = new Mock<ICoordinateHelper>();
             coordinateHelperMock.Setup(_ => _.CalculateDistance(It.IsAny<TestCoordinate>(), It.IsAny<TestCoordinate>())).Returns(1);
-            var cellGridMock = new Mock<IGrid<Cell, TestCoordinate>>();
-            cellGridMock.Setup(_ => _.Items).Returns(Enumerable.Empty<(TestCoordinate, Cell)>());
+            var cellGridMock = new Mock<IGrid<Cell>>();
+            cellGridMock.Setup(_ => _.Items).Returns(Enumerable.Empty<(ICoordinate, Cell)>());
             cellGridMock.Setup(_ => _.Size).Returns(10);
             cellGridMock.Setup(_ => _.Get(It.IsAny<TestCoordinate>())).Returns(new Cell());
             cellGridMock.Setup(_ => _.Set(It.IsAny<TestCoordinate>(), It.IsAny<Cell>()));
-            cellGridMock.Setup(_ => _.NearItems(It.IsAny<TestCoordinate>(), It.IsAny<int>())).Returns(Enumerable.Empty<(TestCoordinate, Cell)>());
-            var terrainGridMock = new Mock<IGrid<ETerrainType, TestCoordinate>>();
-            terrainGridMock.Setup(_ => _.Items).Returns(Enumerable.Repeat((new TestCoordinate { I = 0 }, ETerrainType.Desert), 10));
+            cellGridMock.Setup(_ => _.NearItems(It.IsAny<TestCoordinate>(), It.IsAny<int>())).Returns(Enumerable.Empty<(ICoordinate, Cell)>());
+            var terrainGridMock = new Mock<IGrid<ETerrainType>>();
+            terrainGridMock.Setup(_ => _.Items).Returns(Enumerable.Repeat((new TestCoordinate { I = 0 } as ICoordinate, ETerrainType.Desert), 10));
             terrainGridMock.Setup(_ => _.Size).Returns(10);
             terrainGridMock.Setup(_ => _.Get(It.IsAny<TestCoordinate>())).Returns(ETerrainType.Desert);
             terrainGridMock.Setup(_ => _.Set(It.IsAny<TestCoordinate>(), It.IsAny<ETerrainType>()));
-            terrainGridMock.Setup(_ => _.NearItems(It.IsAny<TestCoordinate>(), It.IsAny<int>())).Returns(Enumerable.Empty<(TestCoordinate, ETerrainType)>());
-            var habitatGridMock = new Mock<IGrid<EHabitatType?, TestCoordinate>>();
-            habitatGridMock.Setup(_ => _.Items).Returns(Enumerable.Repeat((new TestCoordinate { I = 0 }, (EHabitatType?)EHabitatType.Bear), 10));
+            terrainGridMock.Setup(_ => _.NearItems(It.IsAny<TestCoordinate>(), It.IsAny<int>())).Returns(Enumerable.Empty<(ICoordinate, ETerrainType)>());
+            var habitatGridMock = new Mock<IGrid<EHabitatType?>>();
+            habitatGridMock.Setup(_ => _.Items).Returns(Enumerable.Repeat((new TestCoordinate { I = 0 } as ICoordinate, (EHabitatType?)EHabitatType.Bear), 10));
             habitatGridMock.Setup(_ => _.Size).Returns(10);
             habitatGridMock.Setup(_ => _.Get(It.IsAny<TestCoordinate>())).Returns((EHabitatType?)null);
             habitatGridMock.Setup(_ => _.Set(It.IsAny<TestCoordinate>(), It.IsAny<EHabitatType?>()));
-            habitatGridMock.Setup(_ => _.NearItems(It.IsAny<TestCoordinate>(), It.IsAny<int>())).Returns(Enumerable.Empty<(TestCoordinate, EHabitatType?)>());
+            habitatGridMock.Setup(_ => _.NearItems(It.IsAny<TestCoordinate>(), It.IsAny<int>())).Returns(Enumerable.Empty<(ICoordinate, EHabitatType?)>());
 
             // TODO: Implement mock object for IGrid
-            var builderMock = new Mock<IGridBuilder<TestCoordinate>>();
+            var builderMock = new Mock<IGridBuilder>();
             builderMock.Setup(_ => _.BuildRandom(It.IsAny<Random>())).Returns(coordinateRandomMock.Object);
             builderMock.Setup(_ => _.BuildCoordinateHelper()).Returns(coordinateHelperMock.Object);
             builderMock.Setup(_ => _.BuildGrid<EHabitatType?>()).Returns(habitatGridMock.Object);
             builderMock.Setup(_ => _.BuildGrid<ETerrainType>()).Returns(terrainGridMock.Object);
             builderMock.Setup(_ => _.BuildGrid<Cell>()).Returns(cellGridMock.Object);
 
-            var generator = new GridGenerator<TestCoordinate>(builderMock.Object, new Random());
+            var generator = new GridGenerator(builderMock.Object, new Random());
 
             var grid = generator.Generate();
             

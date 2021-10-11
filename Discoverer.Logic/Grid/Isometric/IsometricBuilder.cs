@@ -2,7 +2,7 @@
 
 namespace Discoverer.Logic.Grid.Isometric
 {
-    public class IsometricBuilder : IGridBuilder<IsometricCoordinate>
+    public class IsometricBuilder : IGridBuilder
     {
         private readonly int _width;
         private readonly int _height;
@@ -13,17 +13,17 @@ namespace Discoverer.Logic.Grid.Isometric
             _height = height;
         }
         
-        public IGrid<T, IsometricCoordinate> BuildGrid<T>()
+        public IGrid<T> BuildGrid<T>()
         {
             return new IsometricGrid<T>(_width, _height);
         }
         
-        public ICoordinateRandom<IsometricCoordinate> BuildRandom(Random random)
+        public ICoordinateRandom BuildRandom(Random random)
         {
             return new IsometricCoordinateRandom(_width, _height, random);
         }
         
-        public ICoordinateHelper<IsometricCoordinate> BuildCoordinateHelper()
+        public ICoordinateHelper BuildCoordinateHelper()
         {
             return new IsometricCoordinateHelper();
         }

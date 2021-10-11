@@ -1,8 +1,8 @@
 ﻿
 namespace Discoverer.Logic.Grid
 {
-    public interface ICoordinateRandom<TCoord> where TCoord : notnull
+    public interface ICoordinateRandom
     {
-        TCoord Next();
+        ICoordinate Next();
     }
 }

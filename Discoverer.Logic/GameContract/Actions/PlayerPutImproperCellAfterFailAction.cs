@@ -3,7 +3,7 @@
 namespace Discoverer.Logic.GameContract.Actions
 {
     public record PlayerPutImproperCellAfterFailAction(
-        Player Player,
+        int PlayerNum,
         ICoordinate Cell
     ) : GameAction;
 }

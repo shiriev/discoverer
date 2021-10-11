@@ -6,9 +6,9 @@ using Discoverer.Logic.Grid;
 
 namespace Discoverer.Logic.Hints
 {
-    internal static class HintFunctions<TCoord> where TCoord : ICoordinate
+    public static class HintFunctions
     {
-        internal static readonly Dictionary<EHint, Func<IGrid<Cell, TCoord>, TCoord, bool>> Functions = new() {
+        public static readonly Dictionary<EHint, Func<IGrid<Cell>, ICoordinate, bool>> Functions = new() {
             {EHint.DesertOrForest, (grid, coord) => grid.Get(coord).Terrain is ETerrainType.Desert or ETerrainType.Forest},
             {EHint.DesertOrMountain, (grid, coord) => grid.Get(coord).Terrain is ETerrainType.Desert or ETerrainType.Mountain},
             {EHint.DesertOrSwamp, (grid, coord) => grid.Get(coord).Terrain is ETerrainType.Desert or ETerrainType.Swamp},
@@ -40,9 +40,9 @@ namespace Discoverer.Logic.Hints
             {EHint.WithinThreeCellsOfAnyWhiteBuilding, (grid, coord) => NearBy(grid, coord, 3, cell => cell.Building is {Color: EColor.White})},
         };
 
-        internal static Dictionary<EHint, Func<IGrid<Cell, TCoord>, TCoord, bool>> SimpleModeFunctions => Functions;
+        public static Dictionary<EHint, Func<IGrid<Cell>, ICoordinate, bool>> SimpleModeFunctions => Functions;
         
-        private static bool NearBy(IGrid<Cell, TCoord> grid, TCoord coord, int distance, Func<Cell, bool> rule)
+        private static bool NearBy(IGrid<Cell> grid, ICoordinate coord, int distance, Func<Cell, bool> rule)
         {
             return grid.NearItems(coord, distance).Any(t => rule(t.Item2));
         }

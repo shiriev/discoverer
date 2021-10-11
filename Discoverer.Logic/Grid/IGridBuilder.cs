@@ -2,10 +2,10 @@
 
 namespace Discoverer.Logic.Grid
 {
-    public interface IGridBuilder<TCoord> where TCoord : ICoordinate
+    public interface IGridBuilder
     {
-        IGrid<T, TCoord> BuildGrid<T>();
-        ICoordinateRandom<TCoord> BuildRandom(Random random);
-        ICoordinateHelper<TCoord> BuildCoordinateHelper();
+        IGrid<T> BuildGrid<T>();
+        ICoordinateRandom BuildRandom(Random random);
+        ICoordinateHelper BuildCoordinateHelper();
     }
 }

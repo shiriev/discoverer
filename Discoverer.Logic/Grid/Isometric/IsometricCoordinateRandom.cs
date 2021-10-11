@@ -2,7 +2,7 @@
 
 namespace Discoverer.Logic.Grid.Isometric
 {
-    public class IsometricCoordinateRandom : ICoordinateRandom<IsometricCoordinate>
+    public class IsometricCoordinateRandom : ICoordinateRandom
     {
         private readonly Random _random;
         
@@ -16,9 +16,9 @@ namespace Discoverer.Logic.Grid.Isometric
             _random = random;
         }
         
-        public IsometricCoordinate Next()
+        public ICoordinate Next()
         {
-            return new()
+            return new IsometricCoordinate
             {
                 X = _random.Next(0, _width),
                 Y = _random.Next(0, _height)

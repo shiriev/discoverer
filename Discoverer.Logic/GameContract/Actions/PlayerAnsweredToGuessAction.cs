@@ -1,4 +1,10 @@
-﻿namespace Discoverer.Logic.GameContract.Actions
+﻿using Discoverer.Logic.Grid;
+
+namespace Discoverer.Logic.GameContract.Actions
 {
-    public record PlayerAnsweredToGuessAction(Player Player) : GameAction;
+    public record PlayerAnsweredToGuessAction(
+        int AskingPlayerNum,
+        int AnsweringPlayerNum,
+        bool Answer,
+        ICoordinate Cell) : GameAction;
 }

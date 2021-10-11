@@ -3,7 +3,6 @@
 namespace Discoverer.Logic.GameContract.Commands
 {
     public record AskQuestionCommand(
-        Player AskingPlayer,
-        Player AnsweringPlayer,
-        ICoordinate Cell) : GameCommand;
+        int AnsweringPlayerNum,
+        ICoordinate Coordinate) : GameCommand;
 }

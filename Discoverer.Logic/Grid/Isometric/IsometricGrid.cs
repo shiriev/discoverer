@@ -8,7 +8,7 @@ namespace Discoverer.Logic.Grid.Isometric
         public static string GlobalType => "Isometric";
     }
     
-    public class IsometricGrid<T> : IsometricGrid, IGrid<T, IsometricCoordinate>
+    public class IsometricGrid<T> : IsometricGrid, IGrid<T>
     {
         private readonly int _width;
         private readonly int _height;
@@ -22,8 +22,15 @@ namespace Discoverer.Logic.Grid.Isometric
             _height = height;
             _cells = new T[_width, _height];
         }
+        
+        private IsometricGrid(T[,] cells)
+        {
+            _width = cells.GetLength(0);
+            _height = cells.GetLength(1);
+            _cells = (T[,]) cells.Clone();
+        }
 
-        public IEnumerable<(IsometricCoordinate, T)> Items
+        public IEnumerable<(ICoordinate, T)> Items
         {
             get
             {
@@ -31,7 +38,7 @@ namespace Discoverer.Logic.Grid.Isometric
                 {
                     for (var y = 0; y < _cells.GetLength(1); ++y)
                     {
-                        yield return (new() { X = x, Y = y }, _cells[x, y]);
+                        yield return (new IsometricCoordinate() { X = x, Y = y }, _cells[x, y]);
                     }
                 }
             }
@@ -39,29 +46,40 @@ namespace Discoverer.Logic.Grid.Isometric
 
         public int Size => _width * _height;
 
-        public T Get(IsometricCoordinate coord)
+        public T Get(ICoordinate coord)
         {
-            return _cells[coord.X, coord.Y];
+            if (coord is not IsometricCoordinate isometricCoordinate) throw new ArgumentException(nameof(coord));
+
+            return _cells[isometricCoordinate.X, isometricCoordinate.Y];
         }
 
-        public void Set(IsometricCoordinate coord, T value)
+        public void Set(ICoordinate coord, T value)
         {
-            _cells[coord.X, coord.Y] = value;
+            if (coord is not IsometricCoordinate isometricCoordinate) throw new ArgumentException(nameof(coord));
+            
+            _cells[isometricCoordinate.X, isometricCoordinate.Y] = value;
         }
 
-        public IEnumerable<(IsometricCoordinate, T)> NearItems(IsometricCoordinate coord, int distance = 1)
+        public IEnumerable<(ICoordinate, T)> NearItems(ICoordinate coord, int distance = 1)
         {
-            var minx = Math.Max(0, coord.X - distance);
-            var maxx = Math.Min(_width - 1, coord.X + distance);
-            var miny = Math.Max(0, coord.Y - distance);
-            var maxy = Math.Min(_height - 1, coord.Y + distance);
+            if (coord is not IsometricCoordinate isometricCoordinate) throw new ArgumentException(nameof(coord));
+            
+            var minx = Math.Max(0, isometricCoordinate.X - distance);
+            var maxx = Math.Min(_width - 1, isometricCoordinate.X + distance);
+            var miny = Math.Max(0, isometricCoordinate.Y - distance);
+            var maxy = Math.Min(_height - 1, isometricCoordinate.Y + distance);
             for (var x = minx; x <= maxx; ++x)
             {
                 for (var y = miny; y <= maxy; ++y)
                 {
-                    yield return (new() { X = x, Y = y }, _cells[x, y]);
+                    yield return (new IsometricCoordinate() { X = x, Y = y }, _cells[x, y]);
                 }
             }
+        }
+
+        public IGrid<T> Copy()
+        {
+            return new IsometricGrid<T>(_cells);
         }
 
         public T[,] Cells => _cells;

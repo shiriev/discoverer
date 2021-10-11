@@ -14,43 +14,29 @@ namespace Discoverer.Logic.Generator
     {
         private const int AttemptMaxCount = 20;
         
-        public Level Generate(GenerationSettings settings)
+        public Level Generate(GameSettings settings)
         {
             if (settings.PlayerCount <= 1)
                 throw new ArgumentOutOfRangeException(nameof(settings.PlayerCount), settings.PlayerCount, null);
             
             var random = settings.Seed.HasValue ? new Random(settings.Seed.Value) : new Random();
             
+            IGridBuilder gridBuilder = 
+                settings.GridType == EGridType.Hex 
+                    ? new HexBuilder(settings.Width, settings.Height) 
+                    : new IsometricBuilder(settings.Width, settings.Height);
+            var gridGenerator = new GridGenerator(gridBuilder, random);
+            var hintGenerator = new HintGenerator(settings.PlayerCount, HintFunctions.SimpleModeFunctions);
+            
             for (var i = 0; i < AttemptMaxCount; ++i)
             {
-                IGrid<Cell> grid;
-                ICoordinate grail;
-                EHint[] hints;
-                if (settings.GridType == EGridType.Hex)
-                {
-                    var gridBuilder = new HexBuilder(settings.Width, settings.Height);
-                    var gridGenerator = new GridGenerator<HexCoordinate>(gridBuilder, random);
-                    var hintGenerator = new HintGenerator<HexCoordinate>(settings.PlayerCount, HintFunctions<HexCoordinate>.SimpleModeFunctions);
-                    var hexGrid = gridGenerator.Generate();
-                    grid = hexGrid;
-                    var allHints = hintGenerator.Generate(hexGrid);
-                    if (!allHints.Any())
-                        continue;
-                    (grail, hints) = allHints[random.Next(allHints.Length - 1)];
-                }
-                else
-                {
-                    var gridBuilder = new IsometricBuilder(settings.Width, settings.Height);
-                    var gridGenerator = new GridGenerator<IsometricCoordinate>(gridBuilder, random);
-                    var hintGenerator = new HintGenerator<IsometricCoordinate>(settings.PlayerCount, HintFunctions<IsometricCoordinate>.SimpleModeFunctions);
-                    var isometricGrid = gridGenerator.Generate();
-                    grid = isometricGrid;
-                    var allHints = hintGenerator.Generate(isometricGrid);
-                    if (!allHints.Any())
-                        continue;
-                    (grail, hints) = allHints[random.Next(allHints.Length - 1)];
-                }
                 
+                var grid = gridGenerator.Generate();
+                var allHints = hintGenerator.Generate(grid);
+                if (!allHints.Any())
+                    continue;
+                var (grail, hints) = allHints[random.Next(allHints.Length - 1)];
+
                 return new Level
                 {
                     Grid = grid,

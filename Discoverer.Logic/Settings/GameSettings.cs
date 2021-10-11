@@ -2,7 +2,7 @@
 
 namespace Discoverer.Logic.Settings
 {
-    public class GenerationSettings
+    public class GameSettings
     {
         public int PlayerCount { get; set; }
         
@@ -12,6 +12,7 @@ namespace Discoverer.Logic.Settings
         
         public EGridType GridType { get; set; }
         
+        // TODO: Make decision - Drop or not seed
         public int? Seed { get; set; }
     }
 }

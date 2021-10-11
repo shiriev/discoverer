@@ -2,7 +2,7 @@
 
 namespace Discoverer.Logic.Grid.Hex
 {
-    public class HexBuilder : IGridBuilder<HexCoordinate>
+    public class HexBuilder : IGridBuilder
     {
         private readonly int _width;
         private readonly int _height;
@@ -13,17 +13,17 @@ namespace Discoverer.Logic.Grid.Hex
             _height = height;
         }
         
-        public IGrid<T, HexCoordinate> BuildGrid<T>()
+        public IGrid<T> BuildGrid<T>()
         {
             return new HexGrid<T>(_width, _height);
         }
         
-        public ICoordinateRandom<HexCoordinate> BuildRandom(Random random)
+        public ICoordinateRandom BuildRandom(Random random)
         {
             return new HexCoordinateRandom(_width, _height, random);
         }
         
-        public ICoordinateHelper<HexCoordinate> BuildCoordinateHelper()
+        public ICoordinateHelper BuildCoordinateHelper()
         {
             return new HexCoordinateHelper();
         }

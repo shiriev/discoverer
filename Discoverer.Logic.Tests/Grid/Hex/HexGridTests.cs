@@ -185,5 +185,45 @@ namespace Discoverer.Logic.Tests.Grid.Hex
             
             Assert.AreEqual(expected, size);
         }
+
+        [Test]
+        public void Copy_ForGrid_MakeFullCopy()
+        {
+            var grid = new HexGrid<(int, int)>(5, 5);
+
+            for (var x = 0; x < 5; x++)
+            {
+                for (var y = 0; y < 5; y++)
+                {
+                    grid.Set(new HexCoordinate { X = x, Y = y }, (x, y));
+                }
+            }
+
+            var newGrid = grid.Copy();
+            
+            Assert.IsInstanceOf(typeof(HexGrid<(int, int)>), newGrid);
+            CollectionAssert.AreEqual(grid.Items, newGrid.Items);
+        }
+        
+        [Test]
+        public void Copy_AfterOriginalWasChanged_CopyIsNotEqualToOriginal()
+        {
+            var grid = new HexGrid<int>(5, 5);
+
+            for (var x = 0; x < 5; x++)
+            {
+                for (var y = 0; y < 5; y++)
+                {
+                    grid.Set(new HexCoordinate { X = x, Y = y }, 0);
+                }
+            }
+
+            var newGrid = grid.Copy();
+            
+            grid.Set(new HexCoordinate { X = 1, Y = 1}, 1);
+            
+            Assert.IsInstanceOf(typeof(HexGrid<int>), newGrid);
+            CollectionAssert.AreNotEqual(grid.Items, newGrid.Items);
+        }
     }
 }

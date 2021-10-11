@@ -67,24 +67,21 @@ namespace Discoverer.Logic.Generator
                     yield break;
             }
         }
-    }
 
-    internal class HintGenerator<TCoord> : HintGenerator where TCoord : ICoordinate
-    {
         private readonly int _playerCount;
-        private readonly Dictionary<EHint, Func<IGrid<Cell, TCoord>, TCoord, bool>> _hintFunctions;
+        private readonly Dictionary<EHint, Func<IGrid<Cell>, ICoordinate, bool>> _hintFunctions;
         
-        public HintGenerator(int playerCount, Dictionary<EHint, Func<IGrid<Cell, TCoord>, TCoord, bool>> hintFunctions)
+        public HintGenerator(int playerCount, Dictionary<EHint, Func<IGrid<Cell>, ICoordinate, bool>> hintFunctions)
         {
             _playerCount = playerCount;
             _hintFunctions = hintFunctions;
         }
         
         // TODO: Описать алгоритм работы
-        public (TCoord, EHint[])[] Generate(
-            IGrid<Cell, TCoord> grid)
+        public (ICoordinate, EHint[])[] Generate(
+            IGrid<Cell> grid)
         {
-            var correctNums = new Dictionary<string, (TCoord, EHint[])>();
+            var correctNums = new Dictionary<string, (ICoordinate, EHint[])>();
             var incorrectNums = new HashSet<string>();
 
             foreach (var (coord, _) in grid.Items)

@@ -54,7 +54,7 @@ namespace Discoverer.Logic.Tests.Grid.Hex
         [TestCase(0, 0, 5, 5, 8)]
         [TestCase(0, 0, 5, 0, 5)]
         [TestCase(0, 0, 5, 2, 5)]
-        public void Distance_ForTestCases_ReturnsDistance(int xa, int ya, int xb, int yb, int expected)
+        public void CalculateDistance_ForTestCases_ReturnsDistance(int xa, int ya, int xb, int yb, int expected)
         {
             var helper = new HexCoordinateHelper();
 
@@ -63,6 +63,26 @@ namespace Discoverer.Logic.Tests.Grid.Hex
                 new HexCoordinate { X = xb, Y = yb });
             
             Assert.AreEqual(expected, distance);
+        }
+        
+        [TestCase(0, 0, 0, 0, true)]
+        [TestCase(0, 5, 0, 5, true)]
+        [TestCase(3, 0, 3, 0, true)]
+        [TestCase(4, 4, 4, 4, true)]
+        [TestCase(4, 4, 4, 4, true)]
+        [TestCase(0, 0, 1, 1, false)]
+        [TestCase(2, 2, 1, 1, false)]
+        [TestCase(0, 0, 1, 1, false)]
+        [TestCase(2, 0, 0, 2, false)]
+        public void SamePoint_ForTestCases_ReturnsEquality (int xa, int ya, int xb, int yb, bool expected)
+        {
+            var helper = new HexCoordinateHelper();
+
+            var isSamePoint = helper.SamePoint(
+                new HexCoordinate { X = xa, Y = ya }, 
+                new HexCoordinate { X = xb, Y = yb });
+            
+            Assert.AreEqual(expected, isSamePoint);
         }
     }
 }

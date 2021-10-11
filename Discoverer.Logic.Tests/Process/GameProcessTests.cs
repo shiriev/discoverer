@@ -18,13 +18,13 @@ namespace Discoverer.Logic.Tests.Process
             {
                 var players = new List<Player>
                 {
-                    new (0, "One", Guid.NewGuid()),
-                    new (1, "Two", Guid.NewGuid()),
+                    new() { Order = 0, Name = "One", Id = Guid.NewGuid() },
+                    new() { Order = 1, Name = "Two", Id = Guid.NewGuid() },
                 };
                 
                 var level = new Level
                 {
-                    Grid = new TestGrid<Cell>(),
+                    Grid = new TestGrid<Cell>(5),
                     Hints = new [] { EHint.SwampOrWater, EHint.DesertOrSwamp },
                     Grail = new TestCoordinate { I = 0 },
                 };
@@ -33,12 +33,12 @@ namespace Discoverer.Logic.Tests.Process
                     new ProcessState
                     (
                         Actions: new List<GameAction>(),
-                        CellStateGrid: new TestGrid<CellState>(),
-                        Players: players,
-                        CurrentPlayerId: players.First().Id,
+                        CellStateGrid: new TestGrid<CellState>(5),
+                        CurrentPlayerNum: 0,
                         CurrentTurn: 0,
                         GameState: new GameNotStartedState(),
-                        GameId: Guid.NewGuid()
+                        GameId: Guid.NewGuid(),
+                        PlayerCount: 2
                     ),
                     null
                 );

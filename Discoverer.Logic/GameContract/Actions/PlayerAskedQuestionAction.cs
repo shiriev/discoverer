@@ -2,8 +2,8 @@
 
 namespace Discoverer.Logic.GameContract.Actions
 {
-    public record PlayerAskedGuessAction(
-        Player AskingPlayer,
-        Player AnsweringPlayer,
+    public record PlayerAskedQuestionAction(
+        int AskingPlayerNum,
+        int AnsweringPlayerNum,
         ICoordinate Cell) : GameAction;
 }

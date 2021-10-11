@@ -13,6 +13,8 @@ namespace Discoverer.Logic.Generator
 
     internal class GridGenerator
     {
+        // TODO: Get counts of object from outside
+        
         protected const double TerrainMarkerCountToGridSizeSqrt = 1;
         protected const double HabitatCountToGridSizeSqrt = 1;
         protected static readonly Array TerrainValues = Enum.GetValues(typeof(ETerrainType));
@@ -31,18 +33,13 @@ namespace Discoverer.Logic.Generator
             EHabitatType.Bear,
             EHabitatType.Tiger,
         };
-    }
-    
-    internal class GridGenerator<TCoord> : GridGenerator where TCoord : ICoordinate
-    {
-        // TODO: Get counts of object from outside
 
-        private readonly IGridBuilder<TCoord> _gridBuilder;
-        private readonly ICoordinateRandom<TCoord> _randomCoordinate;
-        private readonly ICoordinateHelper<TCoord> _coordinateHelper;
+        private readonly IGridBuilder _gridBuilder;
+        private readonly ICoordinateRandom _randomCoordinate;
+        private readonly ICoordinateHelper _coordinateHelper;
         private readonly Random _random;
 
-        public GridGenerator(IGridBuilder<TCoord> gridBuilder, Random random)
+        public GridGenerator(IGridBuilder gridBuilder, Random random)
         {
             _gridBuilder = gridBuilder;
             _random = random;
@@ -50,7 +47,7 @@ namespace Discoverer.Logic.Generator
             _coordinateHelper = _gridBuilder.BuildCoordinateHelper();
         }
 
-        public IGrid<Cell, TCoord> Generate()
+        public IGrid<Cell> Generate()
         {
             var terrains = GenerateTerrain();
             var habitats = GenerateHabitat();
@@ -71,10 +68,10 @@ namespace Discoverer.Logic.Generator
             return grid;
         }
         
-        private IGrid<ETerrainType, TCoord> GenerateTerrain()
+        private IGrid<ETerrainType> GenerateTerrain()
         {
             var terrains = _gridBuilder.BuildGrid<ETerrainType>();
-            var markers = new Dictionary<TCoord, ETerrainType>();
+            var markers = new Dictionary<ICoordinate, ETerrainType>();
             var startValues = (int)(TerrainMarkerCountToGridSizeSqrt * Math.Sqrt(terrains.Size));
             
             for (var i = 0; i < startValues; ++i)
@@ -116,7 +113,7 @@ namespace Discoverer.Logic.Generator
             return (ETerrainType)(TerrainValues.GetValue(_random.Next(TerrainValues.Length)) ?? throw new InvalidOperationException());
         }
 
-        private IGrid<EHabitatType?, TCoord> GenerateHabitat()
+        private IGrid<EHabitatType?> GenerateHabitat()
         {
             var habitats = _gridBuilder.BuildGrid<EHabitatType?>();
 
@@ -156,9 +153,10 @@ namespace Discoverer.Logic.Generator
             return habitats;
         }
 
-        private Dictionary<TCoord, Building> GenerateBuildings()
+        //TODO: do not use Equals of coordinate
+        private Dictionary<ICoordinate, Building> GenerateBuildings()
         {
-            var buildings = new Dictionary<TCoord, Building>();
+            var buildings = new Dictionary<ICoordinate, Building>();
             
             for (var i = 0; i < DefaultBuilding.Length; ++i)
             {

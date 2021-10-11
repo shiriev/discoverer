@@ -22,5 +22,25 @@ namespace Discoverer.Logic.Tests.Grid.Isometric
             
             Assert.AreEqual(expected, distance);
         }
+        
+        [TestCase(0, 0, 0, 0, true)]
+        [TestCase(0, 5, 0, 5, true)]
+        [TestCase(3, 0, 3, 0, true)]
+        [TestCase(4, 4, 4, 4, true)]
+        [TestCase(4, 4, 4, 4, true)]
+        [TestCase(0, 0, 1, 1, false)]
+        [TestCase(2, 2, 1, 1, false)]
+        [TestCase(0, 0, 1, 1, false)]
+        [TestCase(2, 0, 0, 2, false)]
+        public void SamePoint_ForTestCases_ReturnsEquality (int xa, int ya, int xb, int yb, bool expected)
+        {
+            var helper = new IsometricCoordinateHelper();
+
+            var isSamePoint = helper.SamePoint(
+                new IsometricCoordinate { X = xa, Y = ya }, 
+                new IsometricCoordinate { X = xb, Y = yb });
+            
+            Assert.AreEqual(expected, isSamePoint);
+        }
     }
 }

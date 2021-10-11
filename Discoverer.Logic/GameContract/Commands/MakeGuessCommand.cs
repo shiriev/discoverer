@@ -3,6 +3,5 @@
 namespace Discoverer.Logic.GameContract.Commands
 {
     public record MakeGuessCommand(
-        Player Player,
-        ICoordinate Cell) : GameCommand;
+        ICoordinate Coordinate) : GameCommand;
 }

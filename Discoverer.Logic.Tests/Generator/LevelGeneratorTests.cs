@@ -13,7 +13,7 @@ namespace Discoverer.Logic.Tests.Generator
         {
             var generator = new LevelGenerator();
 
-            var level = generator.Generate(new GenerationSettings
+            var level = generator.Generate(new GameSettings
             {
                 GridType = EGridType.Hex,
                 Width = 10,
@@ -29,7 +29,7 @@ namespace Discoverer.Logic.Tests.Generator
         {
             var generator = new LevelGenerator();
 
-            var level = generator.Generate(new GenerationSettings
+            var level = generator.Generate(new GameSettings
             {
                 GridType = EGridType.Isometric,
                 Width = 10,
@@ -45,7 +45,7 @@ namespace Discoverer.Logic.Tests.Generator
         {
             var generator = new LevelGenerator();
 
-            Assert.Throws<ArgumentException>( () => generator.Generate(new GenerationSettings
+            Assert.Throws<ArgumentException>( () => generator.Generate(new GameSettings
             {
                 GridType = EGridType.Isometric,
                 Width = 0,
@@ -59,7 +59,7 @@ namespace Discoverer.Logic.Tests.Generator
         {
             var generator = new LevelGenerator();
 
-            Assert.Throws<ArgumentOutOfRangeException>( () => generator.Generate(new GenerationSettings
+            Assert.Throws<ArgumentOutOfRangeException>( () => generator.Generate(new GameSettings
             {
                 GridType = EGridType.Isometric,
                 Width = 10,
@@ -73,7 +73,7 @@ namespace Discoverer.Logic.Tests.Generator
         {
             var generator = new LevelGenerator();
 
-            Assert.Throws<ArgumentOutOfRangeException>( () => generator.Generate(new GenerationSettings
+            Assert.Throws<ArgumentOutOfRangeException>( () => generator.Generate(new GameSettings
             {
                 GridType = EGridType.Isometric,
                 Width = 10,
@@ -87,7 +87,7 @@ namespace Discoverer.Logic.Tests.Generator
         {
             var generator = new LevelGenerator();
 
-            Assert.Throws<ArgumentOutOfRangeException>( () => generator.Generate(new GenerationSettings
+            Assert.Throws<ArgumentOutOfRangeException>( () => generator.Generate(new GameSettings
             {
                 GridType = EGridType.Isometric,
                 Width = 10,

@@ -3,6 +3,6 @@
 namespace Discoverer.Logic.GameContract.Actions
 {
     public record PlayerMadeGuessAction(
-        Player Player,
+        int PlayerNum,
         ICoordinate Cell) : GameAction;
 }
