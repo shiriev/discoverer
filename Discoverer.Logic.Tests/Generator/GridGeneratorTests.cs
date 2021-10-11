@@ -42,7 +42,7 @@ namespace Discoverer.Logic.Tests.Generator
             var cellGridMock = new Mock<IGrid<Cell>>();
             cellGridMock.Setup(_ => _.Items).Returns(Enumerable.Empty<(ICoordinate, Cell)>());
             cellGridMock.Setup(_ => _.Size).Returns(10);
-            cellGridMock.Setup(_ => _.Get(It.IsAny<TestCoordinate>())).Returns(new Cell());
+            cellGridMock.Setup(_ => _.Get(It.IsAny<TestCoordinate>())).Returns(new Cell(ETerrainType.Desert, EHabitatType.Bear, new Building(EColor.Black, EBuildingType.Monument)));
             cellGridMock.Setup(_ => _.Set(It.IsAny<TestCoordinate>(), It.IsAny<Cell>()));
             cellGridMock.Setup(_ => _.NearItems(It.IsAny<TestCoordinate>(), It.IsAny<int>())).Returns(Enumerable.Empty<(ICoordinate, Cell)>());
             var terrainGridMock = new Mock<IGrid<ETerrainType>>();

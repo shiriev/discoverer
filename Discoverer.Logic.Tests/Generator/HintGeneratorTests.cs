@@ -142,11 +142,16 @@ namespace Discoverer.Logic.Tests.Generator
             int itemCount, int playerCount, Dictionary<EHint, int[]> hintPositions, (TestCoordinate, EHint[])[] expected)
         {
             var gridMock = new Mock<IGrid<Cell>>();
-            gridMock.Setup(_ => _.Items).Returns(Enumerable.Range(0, itemCount).Select(_ => (new TestCoordinate { I = _} as ICoordinate, new Cell())).ToArray());
-            var funcs = hintPositions.ToDictionary<KeyValuePair<EHint, int[]>, EHint, Func<IGrid<Cell>, ICoordinate, bool>>(
+            gridMock.Setup(_ => _.Items)
+                .Returns(
+                    Enumerable.Range(0, itemCount)
+                        .Select(_ => (new TestCoordinate { I = _} as ICoordinate, new Cell(ETerrainType.Desert, EHabitatType.Bear, new Building(EColor.Black, EBuildingType.Monument))))
+                        .ToArray());
+            
+            var functions = hintPositions.ToDictionary<KeyValuePair<EHint, int[]>, EHint, Func<IGrid<Cell>, ICoordinate, bool>>(
                 kv => kv.Key,
-                kv => ((grid, c) => kv.Value.Contains(((TestCoordinate)c).I)));
-            var generator = new HintGenerator(playerCount, funcs);
+                kv => ((_, c) => kv.Value.Contains(((TestCoordinate)c).I)));
+            var generator = new HintGenerator(playerCount, functions);
             
             var result = generator.Generate(gridMock.Object);
 

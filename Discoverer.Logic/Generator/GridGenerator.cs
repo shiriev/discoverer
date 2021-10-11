@@ -20,10 +20,10 @@ namespace Discoverer.Logic.Generator
         protected static readonly Array TerrainValues = Enum.GetValues(typeof(ETerrainType));
         protected static readonly Building[] DefaultBuilding =
         {
-            new() { Color = EColor.Black, Type = EBuildingType.Monument, },
-            new() { Color = EColor.Black, Type = EBuildingType.OldHouse, },
-            new() { Color = EColor.Red, Type = EBuildingType.Monument, },
-            new() { Color = EColor.Red, Type = EBuildingType.OldHouse, },
+            new( Color: EColor.Black, Type: EBuildingType.Monument ),
+            new( Color: EColor.Black, Type: EBuildingType.OldHouse ),
+            new( Color: EColor.Red, Type: EBuildingType.Monument ),
+            new( Color: EColor.Red, Type: EBuildingType.OldHouse ),
         };
         
         protected static readonly EHabitatType[] DefaultHabitats =
@@ -58,11 +58,11 @@ namespace Discoverer.Logic.Generator
             foreach (var (coord, _) in grid.Items)
             {
                 grid.Set(coord, new Cell
-                {
-                    Terrain = terrains.Get(coord),
-                    Habitat = habitats.Get(coord),
-                    Building = buildings.TryGetValue(coord, out var b) ? b : null,
-                });
+                (
+                    Terrain: terrains.Get(coord),
+                    Habitat: habitats.Get(coord),
+                    Building: buildings.TryGetValue(coord, out var b) ? b : null
+                ));
             }
 
             return grid;
