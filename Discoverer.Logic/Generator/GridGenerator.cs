@@ -141,11 +141,11 @@ namespace Discoverer.Logic.Generator
                     continue;
                 }
 
-                var neighbours = habitats.NearItems(coord).Where(_ => _.Item2.HasValue);
-                if (neighbours.Any())
+                var neighbours = habitats.NearItems(coord);
+                var firstHabitat = neighbours.Select(n => n.Item2).FirstOrDefault(h => h.HasValue);
+                if (firstHabitat is not null)
                 {
-                    var (neighbourCoord, neighbourHabitat) = neighbours.First();
-                    habitats.Set(coord, neighbourHabitat);
+                    habitats.Set(coord, firstHabitat);
                     emptyCellCount--;
                 }
             }
