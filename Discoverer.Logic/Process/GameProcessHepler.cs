@@ -28,7 +28,7 @@ namespace Discoverer.Logic.Process
         
         public HexGrid<Region> RegionGrid => _gameProcess.GetRegionGrid() as HexGrid<Region> ?? throw new ArgumentException();
         
-        public HexGrid<CellState> CellStateGrid => _gameProcess.GetCellStateGrid() as HexGrid<CellState> ?? throw new ArgumentException();
+        public HexGrid<MarkerSet> MarkerSetGrid => _gameProcess.GetMarkerSetGrid() as HexGrid<MarkerSet> ?? throw new ArgumentException();
     }
     
     public class IsometricHelper
@@ -43,6 +43,6 @@ namespace Discoverer.Logic.Process
         
         public IsometricGrid<Region> RegionGrid => _gameProcess.GetRegionGrid() as IsometricGrid<Region> ?? throw new ArgumentException();
         
-        public IsometricGrid<CellState> CellStateGrid => _gameProcess.GetCellStateGrid() as IsometricGrid<CellState> ?? throw new ArgumentException();
+        public IsometricGrid<MarkerSet> MarkerSetGrid => _gameProcess.GetMarkerSetGrid() as IsometricGrid<MarkerSet> ?? throw new ArgumentException();
     }
 }

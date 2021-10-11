@@ -8,7 +8,7 @@ namespace Discoverer.Logic.GameContract
     {
         public List<GameAction>? Actions { get; set; }
         
-        public IGrid<CellState>? CellStateGrid { get; set; }
+        public IGrid<MarkerSet>? MarkerSetGrid { get; set; }
         
         public int? CurrentPlayerNum { get; set; }
         

@@ -80,7 +80,7 @@ namespace Discoverer.Logic.Process
                 throw new ArgumentException($"Player cannot put just one improper cell on possible cell ({command.Coordinate})", nameof(command));
             }
             
-            if (processState.CellStateGrid.Get(command.Coordinate).ImproperCellForPlayer.HasValue)
+            if (processState.MarkerSetGrid.Get(command.Coordinate).ImproperCellForPlayer.HasValue)
             {
                 throw new ArgumentException($"Player can put just one improper cell on coordinate ({command.Coordinate})", nameof(command));
             }
@@ -97,12 +97,12 @@ namespace Discoverer.Logic.Process
 
             var newState = newTurn == 2 ? (GameState)new PlayerMakesTurnState() : new PlayerPutsImproperCellOnStartState();
 
-            var newGrid = processState.CellStateGrid.Copy();
-            var oldCell = processState.CellStateGrid.Get(command.Coordinate);
-            newGrid.Set(command.Coordinate, 
-                new CellState(
+            var newMarkerSetGrid = processState.MarkerSetGrid.Copy();
+            var oldMarkerSet = processState.MarkerSetGrid.Get(command.Coordinate);
+            newMarkerSetGrid.Set(command.Coordinate, 
+                new MarkerSet(
                     processState.CurrentPlayerNum, 
-                    oldCell.PossibleCellForPlayers
+                    oldMarkerSet.PossibleCellForPlayers
                 )
             );
 
@@ -110,7 +110,7 @@ namespace Discoverer.Logic.Process
                 processState.Set(new ProcessUpdate
                 {
                     Actions = processState.Actions.Concat(actions).ToList(),
-                    CellStateGrid = newGrid,
+                    MarkerSetGrid = newMarkerSetGrid,
                     CurrentPlayerNum = newOrder,
                     CurrentTurn = newTurn,
                     GameState = newState,
@@ -125,12 +125,12 @@ namespace Discoverer.Logic.Process
                 throw new ArgumentException($"Player cannot ask himself (player num - {command.AnsweringPlayerNum})", nameof(command));
             }
             
-            if (processState.CellStateGrid.Get(command.Coordinate).PossibleCellForPlayers.Contains(command.AnsweringPlayerNum))
+            if (processState.MarkerSetGrid.Get(command.Coordinate).PossibleCellForPlayers.Contains(command.AnsweringPlayerNum))
             {
                 throw new ArgumentException($"Player cannot ask if answering player already has answer on coordinate ({command.Coordinate})", nameof(command));
             }
             
-            if (processState.CellStateGrid.Get(command.Coordinate).ImproperCellForPlayer.HasValue)
+            if (processState.MarkerSetGrid.Get(command.Coordinate).ImproperCellForPlayer.HasValue)
             {
                 throw new ArgumentException($"Player can put just one improper cell on coordinate ({command.Coordinate})", nameof(command));
             }
@@ -150,12 +150,12 @@ namespace Discoverer.Logic.Process
                     ? 0
                     : processState.CurrentPlayerNum + 1;
 
-                var newGrid = processState.CellStateGrid.Copy();
-                var oldCell = processState.CellStateGrid.Get(command.Coordinate);
-                newGrid.Set(command.Coordinate, 
-                    new CellState(
-                        oldCell.ImproperCellForPlayer,
-                        oldCell.PossibleCellForPlayers.Add(command.AnsweringPlayerNum)
+                var newMarkerSetGrid = processState.MarkerSetGrid.Copy();
+                var oldMarkerSet = processState.MarkerSetGrid.Get(command.Coordinate);
+                newMarkerSetGrid.Set(command.Coordinate, 
+                    new MarkerSet(
+                        oldMarkerSet.ImproperCellForPlayer,
+                        oldMarkerSet.PossibleCellForPlayers.Add(command.AnsweringPlayerNum)
                     )
                 );
 
@@ -163,7 +163,7 @@ namespace Discoverer.Logic.Process
                     processState.Set(new ProcessUpdate
                     {
                         Actions = processState.Actions.Concat(actions).ToList(),
-                        CellStateGrid = newGrid,
+                        MarkerSetGrid = newMarkerSetGrid,
                         CurrentPlayerNum = newOrder,
                         CurrentTurn = newTurn,
                         GameState = new PlayerMakesTurnState(),
@@ -172,12 +172,12 @@ namespace Discoverer.Logic.Process
             }
             else
             {
-                var newGrid = processState.CellStateGrid.Copy();
-                var oldCell = processState.CellStateGrid.Get(command.Coordinate);
-                newGrid.Set(command.Coordinate, 
-                    new CellState(
+                var newMarkerSetGrid = processState.MarkerSetGrid.Copy();
+                var oldMarkerSet = processState.MarkerSetGrid.Get(command.Coordinate);
+                newMarkerSetGrid.Set(command.Coordinate, 
+                    new MarkerSet(
                         command.AnsweringPlayerNum,
-                        oldCell.PossibleCellForPlayers
+                        oldMarkerSet.PossibleCellForPlayers
                     )
                 );
 
@@ -185,7 +185,7 @@ namespace Discoverer.Logic.Process
                     processState.Set(new ProcessUpdate
                     {
                         Actions = processState.Actions.Concat(actions).ToList(),
-                        CellStateGrid = newGrid,
+                        MarkerSetGrid = newMarkerSetGrid,
                         GameState = new PlayerPutsImproperCellAfterFailState(),
                     }),
                     actions);
@@ -199,7 +199,7 @@ namespace Discoverer.Logic.Process
                 throw new ArgumentException($"Player cannot put just one improper cell on impossible cell ({command.Coordinate})", nameof(command));
             }
             
-            if (processState.CellStateGrid.Get(command.Coordinate).ImproperCellForPlayer.HasValue)
+            if (processState.MarkerSetGrid.Get(command.Coordinate).ImproperCellForPlayer.HasValue)
             {
                 throw new ArgumentException($"Player can put just one improper cell on coordinate ({command.Coordinate})", nameof(command));
             }
@@ -209,11 +209,11 @@ namespace Discoverer.Logic.Process
                 new PlayerMadeGuessAction(processState.CurrentPlayerNum, command.Coordinate)
             };
             
-            var oldCell = processState.CellStateGrid.Get(command.Coordinate);
-            var possibles = oldCell.PossibleCellForPlayers;
+            var oldMarkerSet = processState.MarkerSetGrid.Get(command.Coordinate);
+            var possibles = oldMarkerSet.PossibleCellForPlayers;
             possibles = possibles.Add(processState.CurrentPlayerNum);
 
-            var newGrid = processState.CellStateGrid.Copy();
+            var newMarkerSetGrid = processState.MarkerSetGrid.Copy();
 
             for (var num = (processState.CurrentPlayerNum + 1) % processState.PlayerCount; num != processState.CurrentPlayerNum; num = (num + 1) % processState.PlayerCount)
             {
@@ -225,8 +225,8 @@ namespace Discoverer.Logic.Process
                 }
                 else
                 {
-                    newGrid.Set(command.Coordinate, 
-                        new CellState(
+                    newMarkerSetGrid.Set(command.Coordinate, 
+                        new MarkerSet(
                             num,
                             possibles
                         )
@@ -235,7 +235,7 @@ namespace Discoverer.Logic.Process
                         processState.Set(new ProcessUpdate
                         {
                             Actions = processState.Actions.Concat(actions).ToList(),
-                            CellStateGrid = newGrid,
+                            MarkerSetGrid = newMarkerSetGrid,
                             GameState = new PlayerPutsImproperCellAfterFailState(),
                         }),
                         actions);
@@ -244,9 +244,9 @@ namespace Discoverer.Logic.Process
             
             actions.Add(new PlayerWonAction(processState.CurrentPlayerNum));
 
-            newGrid.Set(command.Coordinate, 
-                new CellState(
-                    oldCell.ImproperCellForPlayer,
+            newMarkerSetGrid.Set(command.Coordinate, 
+                new MarkerSet(
+                    oldMarkerSet.ImproperCellForPlayer,
                     possibles
                 )
             );
@@ -255,7 +255,7 @@ namespace Discoverer.Logic.Process
                 processState.Set(new ProcessUpdate
                 {
                     Actions = processState.Actions.Concat(actions).ToList(),
-                    CellStateGrid = newGrid,
+                    MarkerSetGrid = newMarkerSetGrid,
                     GameState = new PlayerWinsGameState(),
                 }),
                 actions);
@@ -268,7 +268,7 @@ namespace Discoverer.Logic.Process
                 throw new ArgumentException($"Player cannot put just one improper cell on possible cell ({command.Coordinate})", nameof(command));
             }
             
-            if (processState.CellStateGrid.Get(command.Coordinate).ImproperCellForPlayer.HasValue)
+            if (processState.MarkerSetGrid.Get(command.Coordinate).ImproperCellForPlayer.HasValue)
             {
                 throw new ArgumentException($"Player can put just one improper cell on coordinate ({command.Coordinate})", nameof(command));
             }
@@ -283,12 +283,12 @@ namespace Discoverer.Logic.Process
                 ? 0
                 : processState.CurrentPlayerNum + 1;
 
-            var newGrid = processState.CellStateGrid.Copy();
-            var oldCell = processState.CellStateGrid.Get(command.Coordinate);
-            newGrid.Set(command.Coordinate, 
-                new CellState(
+            var newMarkerSetGrid = processState.MarkerSetGrid.Copy();
+            var oldMarkerSet = processState.MarkerSetGrid.Get(command.Coordinate);
+            newMarkerSetGrid.Set(command.Coordinate, 
+                new MarkerSet(
                     processState.CurrentPlayerNum, 
-                    oldCell.PossibleCellForPlayers
+                    oldMarkerSet.PossibleCellForPlayers
                 )
             );
 
@@ -296,7 +296,7 @@ namespace Discoverer.Logic.Process
                 processState.Set(new ProcessUpdate
                 {
                     Actions = processState.Actions.Concat(actions).ToList(),
-                    CellStateGrid = newGrid,
+                    MarkerSetGrid = newMarkerSetGrid,
                     CurrentPlayerNum = newOrder,
                     CurrentTurn = newTurn,
                     GameState = new PlayerMakesTurnState(),

@@ -67,10 +67,10 @@ namespace Discoverer.Logic.Process
         {
             _level = level;
             _gameSettings = gameSettings;
-            var grid = _gridBuilder.BuildGrid<CellState>();
+            var grid = _gridBuilder.BuildGrid<MarkerSet>();
             foreach (var (coordinate, cellState) in grid.Items)
             {
-                grid.Set(coordinate, new CellState(null, ImmutableHashSet<int>.Empty));
+                grid.Set(coordinate, new MarkerSet(null, ImmutableHashSet<int>.Empty));
             }
 
             _processState = new ProcessState(
@@ -130,9 +130,9 @@ namespace Discoverer.Logic.Process
             return _level.Grid;
         }
         
-        public IGrid<CellState> GetCellStateGrid()
+        public IGrid<MarkerSet> GetMarkerSetGrid()
         {
-            return _processState.CellStateGrid;
+            return _processState.MarkerSetGrid;
         }
 
         public int GetCurrentPlayer()

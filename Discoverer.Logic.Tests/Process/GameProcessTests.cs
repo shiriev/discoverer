@@ -33,7 +33,7 @@ namespace Discoverer.Logic.Tests.Process
                     new ProcessState
                     (
                         Actions: new List<GameAction>(),
-                        CellStateGrid: new TestGrid<CellState>(5),
+                        MarkerSetGrid: new TestGrid<MarkerSet>(5),
                         CurrentPlayerNum: 0,
                         CurrentTurn: 0,
                         GameState: new GameNotStartedState(),

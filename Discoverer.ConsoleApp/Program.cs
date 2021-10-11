@@ -113,7 +113,7 @@ namespace Discoverer.ConsoleApp
             if (game.GetGridType() == EGridType.Hex)
             {
                 DrawHex(game.Hex.RegionGrid.Cells, DrawRegion);
-                DrawHex(game.Hex.CellStateGrid.Cells, DrawCellState);
+                DrawHex(game.Hex.MarkerSetGrid.Cells, DrawMarkerSet);
             
                 Console.WriteLine($"{game.Hex.Grail} [{string.Join(", ", game.GetHints())}]");
 
@@ -121,7 +121,7 @@ namespace Discoverer.ConsoleApp
             else
             {
                 DrawIsometric(game.Isometric.RegionGrid.Cells, DrawRegion);
-                DrawIsometric(game.Isometric.CellStateGrid.Cells, DrawCellState);
+                DrawIsometric(game.Isometric.MarkerSetGrid.Cells, DrawMarkerSet);
             
                 Console.WriteLine($"{game.Isometric.Grail} [{string.Join(", ", game.GetHints())}]");
 
@@ -190,63 +190,6 @@ namespace Discoverer.ConsoleApp
             Console.WriteLine("X");
         }
         
-        static void DrawIsometric2((Region, CellState)[,] cells)
-        {
-            var (width, height) = (cells.GetLength(0), cells.GetLength(1));
-            
-            
-            Console.Write("  ");
-            for (int x = 0; x < width; ++x)
-            {
-                Console.Write($"{x:00} ");
-            }
-            Console.WriteLine("X");
-
-            for (int y = 0; y < height; ++y)
-            {
-                Console.Write($"{y:00}");
-                for (int x = 0; x < width; ++x)
-                {
-                    DrawRegion(cells[x, y].Item1);
-                    Console.Write(" ");
-                }
-                Console.WriteLine();
-            }
-            Console.WriteLine("Y");
-        }
-        
-        static void DrawHex2((Region, CellState)[,] cells)
-        {
-            var (width, height) = (cells.GetLength(0), cells.GetLength(1));
-            
-            Console.Write("  ");
-            for (int y = 0; y < height; y += 2)
-            {
-                Console.Write($"{y:00}  ");
-            }
-            Console.WriteLine();
-            
-            Console.Write("    ");
-            for (int y = 1; y < height; y += 2)
-            {
-                Console.Write($"{y:00}  ");
-            }
-            Console.WriteLine("Y");
-            
-            for (int x = 0; x < width; ++x)
-            {
-                Console.Write($"{x:00}");
-                if (x % 2 == 1)
-                    Console.Write(" ");
-                for (int y = 0; y < height; ++y)
-                {
-                    DrawRegion(cells[x, y].Item1);
-                }
-                Console.WriteLine();
-            }
-            Console.WriteLine("X");
-        }
-
         static void DrawRegion(Region cell)
         {
             Console.ForegroundColor = ConsoleColor.White;
@@ -283,21 +226,21 @@ namespace Discoverer.ConsoleApp
             //Console.Write(mapper[map[x, y]] + " ");
         }
         
-        static void DrawCellState(CellState cellState)
+        static void DrawMarkerSet(MarkerSet markerSet)
         {
             Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = ConsoleColor.Black;
-            if (cellState.ImproperCellForPlayer.HasValue)
+            if (markerSet.ImproperCellForPlayer.HasValue)
             {
-                Console.Write(cellState.ImproperCellForPlayer);
+                Console.Write(markerSet.ImproperCellForPlayer);
             }
             else
             {
                 Console.Write(" ");
             }
-            if (!cellState.PossibleCellForPlayers.IsEmpty)
+            if (!markerSet.PossibleCellForPlayers.IsEmpty)
             {
-                Console.Write(cellState.PossibleCellForPlayers.Min());
+                Console.Write(markerSet.PossibleCellForPlayers.Min());
             }
             else
             {

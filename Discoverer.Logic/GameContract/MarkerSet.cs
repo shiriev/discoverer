@@ -3,10 +3,9 @@ using System.Collections.Immutable;
 
 namespace Discoverer.Logic.GameContract
 {
-    // TODO: Переименовать в TokenSet
-    public record CellState(int? ImproperCellForPlayer, ImmutableHashSet<int> PossibleCellForPlayers)
+    public record MarkerSet(int? ImproperCellForPlayer, ImmutableHashSet<int> PossibleCellForPlayers)
     {
-        public virtual bool Equals(CellState? other)
+        public virtual bool Equals(MarkerSet? other)
         {
             if (other is null)
                 return false;

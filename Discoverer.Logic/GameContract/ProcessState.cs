@@ -8,7 +8,7 @@ namespace Discoverer.Logic.GameContract
     //TODO: Rename class
     public record ProcessState(
         List<GameAction> Actions,
-        IGrid<CellState> CellStateGrid,
+        IGrid<MarkerSet> MarkerSetGrid,
         int CurrentPlayerNum,
         int CurrentTurn,
         GameState GameState,
@@ -21,7 +21,7 @@ namespace Discoverer.Logic.GameContract
             return new
             (
                 Actions: update.Actions ?? Actions,
-                CellStateGrid: update.CellStateGrid ?? CellStateGrid,
+                MarkerSetGrid: update.MarkerSetGrid ?? MarkerSetGrid,
                 CurrentPlayerNum: update.CurrentPlayerNum ?? CurrentPlayerNum,
                 CurrentTurn: update.CurrentTurn ?? CurrentTurn,
                 GameState: update.GameState ?? GameState,
