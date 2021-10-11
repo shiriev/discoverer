@@ -39,12 +39,12 @@ namespace Discoverer.Logic.Tests.Generator
                 .Returns(new TestCoordinate { I = 9 });
             var coordinateHelperMock = new Mock<ICoordinateHelper>();
             coordinateHelperMock.Setup(_ => _.CalculateDistance(It.IsAny<TestCoordinate>(), It.IsAny<TestCoordinate>())).Returns(1);
-            var cellGridMock = new Mock<IGrid<Cell>>();
-            cellGridMock.Setup(_ => _.Items).Returns(Enumerable.Empty<(ICoordinate, Cell)>());
-            cellGridMock.Setup(_ => _.Size).Returns(10);
-            cellGridMock.Setup(_ => _.Get(It.IsAny<TestCoordinate>())).Returns(new Cell(ETerrainType.Desert, EHabitatType.Bear, new Building(EColor.Black, EBuildingType.Monument)));
-            cellGridMock.Setup(_ => _.Set(It.IsAny<TestCoordinate>(), It.IsAny<Cell>()));
-            cellGridMock.Setup(_ => _.NearItems(It.IsAny<TestCoordinate>(), It.IsAny<int>())).Returns(Enumerable.Empty<(ICoordinate, Cell)>());
+            var regionGridMock = new Mock<IGrid<Region>>();
+            regionGridMock.Setup(_ => _.Items).Returns(Enumerable.Empty<(ICoordinate, Region)>());
+            regionGridMock.Setup(_ => _.Size).Returns(10);
+            regionGridMock.Setup(_ => _.Get(It.IsAny<TestCoordinate>())).Returns(new Region(ETerrainType.Desert, EHabitatType.Bear, new Building(EColor.Black, EBuildingType.Monument)));
+            regionGridMock.Setup(_ => _.Set(It.IsAny<TestCoordinate>(), It.IsAny<Region>()));
+            regionGridMock.Setup(_ => _.NearItems(It.IsAny<TestCoordinate>(), It.IsAny<int>())).Returns(Enumerable.Empty<(ICoordinate, Region)>());
             var terrainGridMock = new Mock<IGrid<ETerrainType>>();
             terrainGridMock.Setup(_ => _.Items).Returns(Enumerable.Repeat((new TestCoordinate { I = 0 } as ICoordinate, ETerrainType.Desert), 10));
             terrainGridMock.Setup(_ => _.Size).Returns(10);
@@ -64,7 +64,7 @@ namespace Discoverer.Logic.Tests.Generator
             builderMock.Setup(_ => _.BuildCoordinateHelper()).Returns(coordinateHelperMock.Object);
             builderMock.Setup(_ => _.BuildGrid<EHabitatType?>()).Returns(habitatGridMock.Object);
             builderMock.Setup(_ => _.BuildGrid<ETerrainType>()).Returns(terrainGridMock.Object);
-            builderMock.Setup(_ => _.BuildGrid<Cell>()).Returns(cellGridMock.Object);
+            builderMock.Setup(_ => _.BuildGrid<Region>()).Returns(regionGridMock.Object);
 
             var generator = new GridGenerator(builderMock.Object, new Random());
 

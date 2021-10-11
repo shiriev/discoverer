@@ -26,7 +26,7 @@ namespace Discoverer.Logic.Process
         
         public HexCoordinate Grail => _gameProcess.GetGrail() as HexCoordinate ?? throw new ArgumentException();
         
-        public HexGrid<Cell> CellGrid => _gameProcess.GetCellGrid() as HexGrid<Cell> ?? throw new ArgumentException();
+        public HexGrid<Region> RegionGrid => _gameProcess.GetRegionGrid() as HexGrid<Region> ?? throw new ArgumentException();
         
         public HexGrid<CellState> CellStateGrid => _gameProcess.GetCellStateGrid() as HexGrid<CellState> ?? throw new ArgumentException();
     }
@@ -41,7 +41,7 @@ namespace Discoverer.Logic.Process
         
         public IsometricCoordinate Grail => _gameProcess.GetGrail() as IsometricCoordinate ?? throw new ArgumentException();
         
-        public IsometricGrid<Cell> CellGrid => _gameProcess.GetCellGrid() as IsometricGrid<Cell> ?? throw new ArgumentException();
+        public IsometricGrid<Region> RegionGrid => _gameProcess.GetRegionGrid() as IsometricGrid<Region> ?? throw new ArgumentException();
         
         public IsometricGrid<CellState> CellStateGrid => _gameProcess.GetCellStateGrid() as IsometricGrid<CellState> ?? throw new ArgumentException();
     }

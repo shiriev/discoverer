@@ -47,17 +47,17 @@ namespace Discoverer.Logic.Generator
             _coordinateHelper = _gridBuilder.BuildCoordinateHelper();
         }
 
-        public IGrid<Cell> Generate()
+        public IGrid<Region> Generate()
         {
             var terrains = GenerateTerrain();
             var habitats = GenerateHabitat();
             var buildings = GenerateBuildings();
 
-            var grid = _gridBuilder.BuildGrid<Cell>();
+            var grid = _gridBuilder.BuildGrid<Region>();
 
             foreach (var (coord, _) in grid.Items)
             {
-                grid.Set(coord, new Cell
+                grid.Set(coord, new Region
                 (
                     Terrain: terrains.Get(coord),
                     Habitat: habitats.Get(coord),

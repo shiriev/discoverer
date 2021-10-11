@@ -24,7 +24,7 @@ namespace Discoverer.Logic.Tests.Process
                 
                 var level = new Level
                 {
-                    Grid = new TestGrid<Cell>(5),
+                    Grid = new TestGrid<Region>(5),
                     Hints = new [] { EHint.SwampOrWater, EHint.DesertOrSwamp },
                     Grail = new TestCoordinate { I = 0 },
                 };

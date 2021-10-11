@@ -112,7 +112,7 @@ namespace Discoverer.ConsoleApp
         {
             if (game.GetGridType() == EGridType.Hex)
             {
-                DrawHex(game.Hex.CellGrid.Cells, DrawCell);
+                DrawHex(game.Hex.RegionGrid.Cells, DrawRegion);
                 DrawHex(game.Hex.CellStateGrid.Cells, DrawCellState);
             
                 Console.WriteLine($"{game.Hex.Grail} [{string.Join(", ", game.GetHints())}]");
@@ -120,7 +120,7 @@ namespace Discoverer.ConsoleApp
             }
             else
             {
-                DrawIsometric(game.Isometric.CellGrid.Cells, DrawCell);
+                DrawIsometric(game.Isometric.RegionGrid.Cells, DrawRegion);
                 DrawIsometric(game.Isometric.CellStateGrid.Cells, DrawCellState);
             
                 Console.WriteLine($"{game.Isometric.Grail} [{string.Join(", ", game.GetHints())}]");
@@ -133,7 +133,64 @@ namespace Discoverer.ConsoleApp
 
         }
         
-        static void DrawIsometric<T>(T[,] cells, Action<T> draw)
+        static void DrawIsometric<T>(T[,] regions, Action<T> draw)
+        {
+            var (width, height) = (regions.GetLength(0), regions.GetLength(1));
+            
+            
+            Console.Write("  ");
+            for (int x = 0; x < width; ++x)
+            {
+                Console.Write($"{x:00} ");
+            }
+            Console.WriteLine("X");
+
+            for (int y = 0; y < height; ++y)
+            {
+                Console.Write($"{y:00}");
+                for (int x = 0; x < width; ++x)
+                {
+                    draw(regions[x, y]);
+                    Console.Write(" ");
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine("Y");
+        }
+        
+        static void DrawHex<T>(T[,] regions, Action<T> draw)
+        {
+            var (width, height) = (regions.GetLength(0), regions.GetLength(1));
+            
+            Console.Write("  ");
+            for (int y = 0; y < height; y += 2)
+            {
+                Console.Write($"{y:00}  ");
+            }
+            Console.WriteLine();
+            
+            Console.Write("    ");
+            for (int y = 1; y < height; y += 2)
+            {
+                Console.Write($"{y:00}  ");
+            }
+            Console.WriteLine("Y");
+            
+            for (int x = 0; x < width; ++x)
+            {
+                Console.Write($"{x:00}");
+                if (x % 2 == 1)
+                    Console.Write(" ");
+                for (int y = 0; y < height; ++y)
+                {
+                    draw(regions[x, y]);
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine("X");
+        }
+        
+        static void DrawIsometric2((Region, CellState)[,] cells)
         {
             var (width, height) = (cells.GetLength(0), cells.GetLength(1));
             
@@ -150,7 +207,7 @@ namespace Discoverer.ConsoleApp
                 Console.Write($"{y:00}");
                 for (int x = 0; x < width; ++x)
                 {
-                    draw(cells[x, y]);
+                    DrawRegion(cells[x, y].Item1);
                     Console.Write(" ");
                 }
                 Console.WriteLine();
@@ -158,7 +215,7 @@ namespace Discoverer.ConsoleApp
             Console.WriteLine("Y");
         }
         
-        static void DrawHex<T>(T[,] cells, Action<T> draw)
+        static void DrawHex2((Region, CellState)[,] cells)
         {
             var (width, height) = (cells.GetLength(0), cells.GetLength(1));
             
@@ -183,71 +240,14 @@ namespace Discoverer.ConsoleApp
                     Console.Write(" ");
                 for (int y = 0; y < height; ++y)
                 {
-                    draw(cells[x, y]);
-                }
-                Console.WriteLine();
-            }
-            Console.WriteLine("X");
-        }
-        
-        static void DrawIsometric2((Cell, CellState)[,] cells)
-        {
-            var (width, height) = (cells.GetLength(0), cells.GetLength(1));
-            
-            
-            Console.Write("  ");
-            for (int x = 0; x < width; ++x)
-            {
-                Console.Write($"{x:00} ");
-            }
-            Console.WriteLine("X");
-
-            for (int y = 0; y < height; ++y)
-            {
-                Console.Write($"{y:00}");
-                for (int x = 0; x < width; ++x)
-                {
-                    DrawCell(cells[x, y].Item1);
-                    Console.Write(" ");
-                }
-                Console.WriteLine();
-            }
-            Console.WriteLine("Y");
-        }
-        
-        static void DrawHex2((Cell, CellState)[,] cells)
-        {
-            var (width, height) = (cells.GetLength(0), cells.GetLength(1));
-            
-            Console.Write("  ");
-            for (int y = 0; y < height; y += 2)
-            {
-                Console.Write($"{y:00}  ");
-            }
-            Console.WriteLine();
-            
-            Console.Write("    ");
-            for (int y = 1; y < height; y += 2)
-            {
-                Console.Write($"{y:00}  ");
-            }
-            Console.WriteLine("Y");
-            
-            for (int x = 0; x < width; ++x)
-            {
-                Console.Write($"{x:00}");
-                if (x % 2 == 1)
-                    Console.Write(" ");
-                for (int y = 0; y < height; ++y)
-                {
-                    DrawCell(cells[x, y].Item1);
+                    DrawRegion(cells[x, y].Item1);
                 }
                 Console.WriteLine();
             }
             Console.WriteLine("X");
         }
 
-        static void DrawCell(Cell cell)
+        static void DrawRegion(Region cell)
         {
             Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = colors[cell.Terrain];
@@ -338,7 +338,7 @@ namespace Discoverer.ConsoleApp
             }
         }
 
-        static void DrawCell2(Cell cell)
+        static void DrawCell2(Region cell)
         {
             Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = colors[cell.Terrain];

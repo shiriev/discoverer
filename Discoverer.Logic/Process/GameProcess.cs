@@ -20,12 +20,12 @@ namespace Discoverer.Logic.Process
         private GameSettings _gameSettings;
         private readonly IGridBuilder _gridBuilder;
         private readonly IProcessUpdater _processUpdater;
-        private readonly Dictionary<EHint, Func<IGrid<Cell>, ICoordinate, bool>> _hintFunctions;
+        private readonly Dictionary<EHint, Func<IGrid<Region>, ICoordinate, bool>> _hintFunctions;
         
         // TODO: Make tests
         // TODO: Complete class
         // TODO: Make ctor instead of Init and LoadState
-        public GameProcess(IGridBuilder gridBuilder, IProcessUpdater processUpdater, Dictionary<EHint, Func<IGrid<Cell>, ICoordinate, bool>> hintFunctions)
+        public GameProcess(IGridBuilder gridBuilder, IProcessUpdater processUpdater, Dictionary<EHint, Func<IGrid<Region>, ICoordinate, bool>> hintFunctions)
         {
             _gridBuilder = gridBuilder;
             _processUpdater = processUpdater;
@@ -123,9 +123,9 @@ namespace Discoverer.Logic.Process
             }
 
             return grid;
-        }*/
-
-        public IGrid<Cell> GetCellGrid()
+        } TODO: Drop comment*/
+        
+        public IGrid<Region> GetRegionGrid()
         {
             return _level.Grid;
         }
