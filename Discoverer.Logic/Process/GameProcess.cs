@@ -20,12 +20,12 @@ namespace Discoverer.Logic.Process
         private GameSettings _gameSettings;
         private readonly IGridBuilder _gridBuilder;
         private readonly IProcessUpdater _processUpdater;
-        private readonly Dictionary<EHint, Func<IGrid<Region>, ICoordinate, bool>> _hintFunctions;
+        private readonly Dictionary<EHint, Func<IImmutableGrid<Region>, ICoordinate, bool>> _hintFunctions;
         
         // TODO: Make tests
         // TODO: Complete class
         // TODO: Make ctor instead of Init and LoadState
-        public GameProcess(IGridBuilder gridBuilder, IProcessUpdater processUpdater, Dictionary<EHint, Func<IGrid<Region>, ICoordinate, bool>> hintFunctions)
+        public GameProcess(IGridBuilder gridBuilder, IProcessUpdater processUpdater, Dictionary<EHint, Func<IImmutableGrid<Region>, ICoordinate, bool>> hintFunctions)
         {
             _gridBuilder = gridBuilder;
             _processUpdater = processUpdater;
@@ -56,7 +56,7 @@ namespace Discoverer.Logic.Process
             return _processUpdater.GetCommandPossibility(_processState, _possibleCells, command);
         }
 
-        public List<GameAction> RunCommand(GameCommand command)
+        public ImmutableList<GameAction> RunCommand(GameCommand command)
         {
             var (processState, actions) = _processUpdater.RunCommand(_processState, _possibleCells, command);
             _processState = processState;
@@ -74,8 +74,8 @@ namespace Discoverer.Logic.Process
             }
 
             _processState = new ProcessState(
-                new List<GameAction>(), 
-                grid, 
+                ImmutableList<GameAction>.Empty, 
+                grid.ToImmutable(), 
                 0, 
                 0, 
                 new GameNotStartedState(), 
@@ -105,34 +105,19 @@ namespace Discoverer.Logic.Process
             return _processState.GameState;
         }
 
-        public List<GameAction> GetAllActions()
+        public ImmutableList<GameAction> GetAllActions()
         {
             return _processState.Actions;
         }
-
-        /*public IGrid<(Cell, CellState)> GetGrid()
-        {
-            var grid = _gridBuilder.BuildGrid<(Cell, CellState)>();
-            
-            foreach (var (coordinate, cellState) in _processState.CellStateGrid.Items)
-            {
-                grid.Set(
-                    coordinate,
-                    (_level.Grid.Get(coordinate), cellState)
-                );
-            }
-
-            return grid;
-        } TODO: Drop comment*/
         
         public IGrid<Region> GetRegionGrid()
         {
-            return _level.Grid;
+            return _level.Grid.CopyGrid();;
         }
         
         public IGrid<MarkerSet> GetMarkerSetGrid()
         {
-            return _processState.MarkerSetGrid;
+            return _processState.MarkerSetGrid.CopyGrid();
         }
 
         public int GetCurrentPlayer()

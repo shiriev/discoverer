@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Immutable;
 using Discoverer.Logic.Grid;
 
 namespace Discoverer.Logic.GameContract
 {
     public class ProcessUpdate
     {
-        public List<GameAction>? Actions { get; set; }
+        public ImmutableList<GameAction>? Actions { get; set; }
         
-        public IGrid<MarkerSet>? MarkerSetGrid { get; set; }
+        public IImmutableGrid<MarkerSet>? MarkerSetGrid { get; set; }
         
         public int? CurrentPlayerNum { get; set; }
         

@@ -69,9 +69,9 @@ namespace Discoverer.Logic.Generator
         }
 
         private readonly int _playerCount;
-        private readonly Dictionary<EHint, Func<IGrid<Region>, ICoordinate, bool>> _hintFunctions;
+        private readonly Dictionary<EHint, Func<IImmutableGrid<Region>, ICoordinate, bool>> _hintFunctions;
         
-        public HintGenerator(int playerCount, Dictionary<EHint, Func<IGrid<Region>, ICoordinate, bool>> hintFunctions)
+        public HintGenerator(int playerCount, Dictionary<EHint, Func<IImmutableGrid<Region>, ICoordinate, bool>> hintFunctions)
         {
             _playerCount = playerCount;
             _hintFunctions = hintFunctions;
@@ -79,7 +79,7 @@ namespace Discoverer.Logic.Generator
         
         // TODO: Описать алгоритм работы
         public (ICoordinate, EHint[])[] Generate(
-            IGrid<Region> grid)
+            IImmutableGrid<Region> grid)
         {
             var correctNums = new Dictionary<string, (ICoordinate, EHint[])>();
             var incorrectNums = new HashSet<string>();

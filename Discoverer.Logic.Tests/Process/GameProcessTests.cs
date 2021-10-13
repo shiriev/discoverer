@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Immutable;
 using Discoverer.Logic.CellContract;
 using Discoverer.Logic.GameContract;
 using Discoverer.Logic.GameContract.GameStates;
+using Discoverer.Logic.Grid;
 using Discoverer.Logic.Hints;
 using Discoverer.Logic.Tests.Mocks;
 using NUnit.Framework;
@@ -24,7 +25,7 @@ namespace Discoverer.Logic.Tests.Process
                 
                 var level = new Level
                 {
-                    Grid = new TestGrid<Region>(5),
+                    Grid = new TestGrid<Region>(5).ToImmutable(),
                     Hints = new [] { EHint.SwampOrWater, EHint.DesertOrSwamp },
                     Grail = new TestCoordinate { I = 0 },
                 };
@@ -32,8 +33,8 @@ namespace Discoverer.Logic.Tests.Process
                 yield return new TestCaseData(
                     new ProcessState
                     (
-                        Actions: new List<GameAction>(),
-                        MarkerSetGrid: new TestGrid<MarkerSet>(5),
+                        Actions: ImmutableList<GameAction>.Empty,
+                        MarkerSetGrid: new TestGrid<MarkerSet>(5).ToImmutable(),
                         CurrentPlayerNum: 0,
                         CurrentTurn: 0,
                         GameState: new GameNotStartedState(),

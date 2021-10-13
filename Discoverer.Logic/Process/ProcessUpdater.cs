@@ -12,14 +12,7 @@ namespace Discoverer.Logic.Process
 {
     public class ProcessUpdater : IProcessUpdater
     {
-        private readonly ICoordinateHelper _coordinateHelper;
-
-        public ProcessUpdater(ICoordinateHelper coordinateHelper)
-        {
-            _coordinateHelper = coordinateHelper ?? throw new ArgumentNullException(nameof(coordinateHelper));
-        }
-        
-        public (ProcessState, List<GameAction>) RunCommand(ProcessState processState, IGrid<bool[]> possibleCells, GameCommand command)
+        public (ProcessState, ImmutableList<GameAction>) RunCommand(ProcessState processState, IGrid<bool[]> possibleCells, GameCommand command)
         {
             if (command is StartGameCommand startGameCommand && processState.GameState is GameNotStartedState)
             {
@@ -58,12 +51,9 @@ namespace Discoverer.Logic.Process
             }
         }
 
-        private (ProcessState, List<GameAction>) RunStartGameCommandOnGameNotStartedState(ProcessState processState, IGrid<bool[]> possibleCells, StartGameCommand command)
+        private static (ProcessState, ImmutableList<GameAction>) RunStartGameCommandOnGameNotStartedState(ProcessState processState, IGrid<bool[]> possibleCells, StartGameCommand command)
         {
-            var actions = new List<GameAction>
-            {
-                new GameStartedAction()
-            };
+            var actions = ImmutableList<GameAction>.Empty.Add(new GameStartedAction());
             return (
                 processState.Set(new ProcessUpdate
                 {
@@ -73,7 +63,7 @@ namespace Discoverer.Logic.Process
                 actions);
         }
         
-        private (ProcessState, List<GameAction>) RunPutImproperCellOnStartCommandOnPlayerPutsImproperCellOnStartState(ProcessState processState, IGrid<bool[]> possibleCells, PutImproperCellOnStartCommand command)
+        private static (ProcessState, ImmutableList<GameAction>) RunPutImproperCellOnStartCommandOnPlayerPutsImproperCellOnStartState(ProcessState processState, IGrid<bool[]> possibleCells, PutImproperCellOnStartCommand command)
         {
             if (possibleCells.Get(command.Coordinate)[processState.CurrentPlayerNum] == true)
             {
@@ -85,10 +75,7 @@ namespace Discoverer.Logic.Process
                 throw new ArgumentException($"Player can put just one improper cell on coordinate ({command.Coordinate})", nameof(command));
             }
 
-            var actions = new List<GameAction>
-            {
-                new PlayerPutImproperCellOnStartAction(processState.CurrentPlayerNum, command.Coordinate)
-            };
+            var actions = ImmutableList<GameAction>.Empty.Add(new PlayerPutImproperCellOnStartAction(processState.CurrentPlayerNum, command.Coordinate));
             
             var newTurn = processState.CurrentPlayerNum == processState.PlayerCount - 1 ? processState.CurrentTurn + 1 : processState.CurrentTurn;
             var newOrder = processState.CurrentPlayerNum == processState.PlayerCount - 1
@@ -97,9 +84,8 @@ namespace Discoverer.Logic.Process
 
             var newState = newTurn == 2 ? (GameState)new PlayerMakesTurnState() : new PlayerPutsImproperCellOnStartState();
 
-            var newMarkerSetGrid = processState.MarkerSetGrid.Copy();
             var oldMarkerSet = processState.MarkerSetGrid.Get(command.Coordinate);
-            newMarkerSetGrid.Set(command.Coordinate, 
+            var newMarkerSetGrid = processState.MarkerSetGrid.CopyWithSet(command.Coordinate, 
                 new MarkerSet(
                     processState.CurrentPlayerNum, 
                     oldMarkerSet.PossibleCellForPlayers
@@ -109,7 +95,7 @@ namespace Discoverer.Logic.Process
             return (
                 processState.Set(new ProcessUpdate
                 {
-                    Actions = processState.Actions.Concat(actions).ToList(),
+                    Actions = processState.Actions.Concat(actions).ToImmutableList(),
                     MarkerSetGrid = newMarkerSetGrid,
                     CurrentPlayerNum = newOrder,
                     CurrentTurn = newTurn,
@@ -118,7 +104,7 @@ namespace Discoverer.Logic.Process
                 actions);
         }
         
-        private (ProcessState, List<GameAction>) RunAskQuestionCommandOnPlayerMakesTurnState(ProcessState processState, IGrid<bool[]> possibleCells, AskQuestionCommand command)
+        private static (ProcessState, ImmutableList<GameAction>) RunAskQuestionCommandOnPlayerMakesTurnState(ProcessState processState, IGrid<bool[]> possibleCells, AskQuestionCommand command)
         {
             if (processState.CurrentPlayerNum == command.AnsweringPlayerNum)
             {
@@ -137,11 +123,9 @@ namespace Discoverer.Logic.Process
 
             var answer = possibleCells.Get(command.Coordinate)[command.AnsweringPlayerNum];
 
-            var actions = new List<GameAction>
-            {
-                new PlayerAskedQuestionAction(processState.CurrentPlayerNum, command.AnsweringPlayerNum, command.Coordinate),
-                new PlayerAnsweredToQuestionAction(processState.CurrentPlayerNum, command.AnsweringPlayerNum, answer, command.Coordinate),
-            };
+            var actions = ImmutableList<GameAction>.Empty
+                .Add(new PlayerAskedQuestionAction(processState.CurrentPlayerNum, command.AnsweringPlayerNum, command.Coordinate))
+                .Add(new PlayerAnsweredToQuestionAction(processState.CurrentPlayerNum, command.AnsweringPlayerNum, answer, command.Coordinate));
 
             if (answer == true)
             {
@@ -150,19 +134,17 @@ namespace Discoverer.Logic.Process
                     ? 0
                     : processState.CurrentPlayerNum + 1;
 
-                var newMarkerSetGrid = processState.MarkerSetGrid.Copy();
                 var oldMarkerSet = processState.MarkerSetGrid.Get(command.Coordinate);
-                newMarkerSetGrid.Set(command.Coordinate, 
+                var newMarkerSetGrid = processState.MarkerSetGrid.CopyWithSet(command.Coordinate, 
                     new MarkerSet(
                         oldMarkerSet.ImproperCellForPlayer,
                         oldMarkerSet.PossibleCellForPlayers.Add(command.AnsweringPlayerNum)
-                    )
-                );
+                    ));
 
                 return (
                     processState.Set(new ProcessUpdate
                     {
-                        Actions = processState.Actions.Concat(actions).ToList(),
+                        Actions = processState.Actions.Concat(actions).ToImmutableList(),
                         MarkerSetGrid = newMarkerSetGrid,
                         CurrentPlayerNum = newOrder,
                         CurrentTurn = newTurn,
@@ -172,19 +154,17 @@ namespace Discoverer.Logic.Process
             }
             else
             {
-                var newMarkerSetGrid = processState.MarkerSetGrid.Copy();
                 var oldMarkerSet = processState.MarkerSetGrid.Get(command.Coordinate);
-                newMarkerSetGrid.Set(command.Coordinate, 
+                var newMarkerSetGrid = processState.MarkerSetGrid.CopyWithSet(command.Coordinate, 
                     new MarkerSet(
                         command.AnsweringPlayerNum,
                         oldMarkerSet.PossibleCellForPlayers
-                    )
-                );
+                    ));
 
                 return (
                     processState.Set(new ProcessUpdate
                     {
-                        Actions = processState.Actions.Concat(actions).ToList(),
+                        Actions = processState.Actions.Concat(actions).ToImmutableList(),
                         MarkerSetGrid = newMarkerSetGrid,
                         GameState = new PlayerPutsImproperCellAfterFailState(),
                     }),
@@ -192,7 +172,7 @@ namespace Discoverer.Logic.Process
             }
         }
         
-        private (ProcessState, List<GameAction>) RunMakeGuessCommandOnPlayerMakesTurnState(ProcessState processState, IGrid<bool[]> possibleCells, MakeGuessCommand command)
+        private static (ProcessState, ImmutableList<GameAction>) RunMakeGuessCommandOnPlayerMakesTurnState(ProcessState processState, IGrid<bool[]> possibleCells, MakeGuessCommand command)
         {
             if (possibleCells.Get(command.Coordinate)[processState.CurrentPlayerNum] == false)
             {
@@ -203,7 +183,7 @@ namespace Discoverer.Logic.Process
             {
                 throw new ArgumentException($"Player can put just one improper cell on coordinate ({command.Coordinate})", nameof(command));
             }
-            
+
             var actions = new List<GameAction>
             {
                 new PlayerMadeGuessAction(processState.CurrentPlayerNum, command.Coordinate)
@@ -213,7 +193,7 @@ namespace Discoverer.Logic.Process
             var possibles = oldMarkerSet.PossibleCellForPlayers;
             possibles = possibles.Add(processState.CurrentPlayerNum);
 
-            var newMarkerSetGrid = processState.MarkerSetGrid.Copy();
+            var newMarkerSetGrid = processState.MarkerSetGrid.CopyGrid();
 
             for (var num = (processState.CurrentPlayerNum + 1) % processState.PlayerCount; num != processState.CurrentPlayerNum; num = (num + 1) % processState.PlayerCount)
             {
@@ -234,11 +214,11 @@ namespace Discoverer.Logic.Process
                     return (
                         processState.Set(new ProcessUpdate
                         {
-                            Actions = processState.Actions.Concat(actions).ToList(),
-                            MarkerSetGrid = newMarkerSetGrid,
+                            Actions = processState.Actions.Concat(actions).ToImmutableList(),
+                            MarkerSetGrid = newMarkerSetGrid.ToImmutable(),
                             GameState = new PlayerPutsImproperCellAfterFailState(),
                         }),
-                        actions);
+                        actions.ToImmutableList());
                 }
             }
             
@@ -254,14 +234,14 @@ namespace Discoverer.Logic.Process
             return (
                 processState.Set(new ProcessUpdate
                 {
-                    Actions = processState.Actions.Concat(actions).ToList(),
-                    MarkerSetGrid = newMarkerSetGrid,
+                    Actions = processState.Actions.Concat(actions).ToImmutableList(),
+                    MarkerSetGrid = newMarkerSetGrid.ToImmutable(),
                     GameState = new PlayerWinsGameState(),
                 }),
-                actions);
+                actions.ToImmutableList());
         }
     
-        private (ProcessState, List<GameAction>) RunPutImproperCellAfterFailCommandOnPlayerPutsImproperCellAfterFailState(ProcessState processState, IGrid<bool[]> possibleCells, PutImproperCellAfterFailCommand command)
+        private static (ProcessState, ImmutableList<GameAction>) RunPutImproperCellAfterFailCommandOnPlayerPutsImproperCellAfterFailState(ProcessState processState, IGrid<bool[]> possibleCells, PutImproperCellAfterFailCommand command)
         {
             if (possibleCells.Get(command.Coordinate)[processState.CurrentPlayerNum] == true)
             {
@@ -283,9 +263,8 @@ namespace Discoverer.Logic.Process
                 ? 0
                 : processState.CurrentPlayerNum + 1;
 
-            var newMarkerSetGrid = processState.MarkerSetGrid.Copy();
             var oldMarkerSet = processState.MarkerSetGrid.Get(command.Coordinate);
-            newMarkerSetGrid.Set(command.Coordinate, 
+            var newMarkerSetGrid = processState.MarkerSetGrid.CopyWithSet(command.Coordinate, 
                 new MarkerSet(
                     processState.CurrentPlayerNum, 
                     oldMarkerSet.PossibleCellForPlayers
@@ -295,13 +274,13 @@ namespace Discoverer.Logic.Process
             return (
                 processState.Set(new ProcessUpdate
                 {
-                    Actions = processState.Actions.Concat(actions).ToList(),
+                    Actions = processState.Actions.Concat(actions).ToImmutableList(),
                     MarkerSetGrid = newMarkerSetGrid,
                     CurrentPlayerNum = newOrder,
                     CurrentTurn = newTurn,
                     GameState = new PlayerMakesTurnState(),
                 }),
-                actions);
+                actions.ToImmutableList());
         }
     }
 }

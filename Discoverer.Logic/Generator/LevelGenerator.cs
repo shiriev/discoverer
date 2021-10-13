@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Discoverer.Logic.CellContract;
 using Discoverer.Logic.GameContract;
 using Discoverer.Logic.Grid;
 using Discoverer.Logic.Grid.Hex;
@@ -32,14 +31,14 @@ namespace Discoverer.Logic.Generator
             {
                 
                 var grid = gridGenerator.Generate();
-                var allHints = hintGenerator.Generate(grid);
+                var allHints = hintGenerator.Generate(grid.ToImmutable());
                 if (!allHints.Any())
                     continue;
                 var (grail, hints) = allHints[random.Next(allHints.Length - 1)];
 
                 return new Level
                 {
-                    Grid = grid,
+                    Grid = grid.ToImmutable(),
                     Hints = hints,
                     Grail = grail,
                 };

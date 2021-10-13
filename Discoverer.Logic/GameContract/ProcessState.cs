@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using Discoverer.Logic.Grid;
 
 namespace Discoverer.Logic.GameContract
 {
-    //TODO: Make ProcessState full immutable
     //TODO: Rename class
     public record ProcessState(
-        List<GameAction> Actions,
-        IGrid<MarkerSet> MarkerSetGrid,
+        ImmutableList<GameAction> Actions,
+        IImmutableGrid<MarkerSet> MarkerSetGrid,
         int CurrentPlayerNum,
         int CurrentTurn,
         GameState GameState,

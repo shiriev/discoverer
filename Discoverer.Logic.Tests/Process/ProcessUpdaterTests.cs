@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using Discoverer.Logic.CellContract;
 using Discoverer.Logic.GameContract;
 using Discoverer.Logic.GameContract.Actions;
 using Discoverer.Logic.GameContract.Commands;
 using Discoverer.Logic.GameContract.GameStates;
-using Discoverer.Logic.Hints;
+using Discoverer.Logic.Grid;
 using Discoverer.Logic.Process;
 using Discoverer.Logic.Tests.Mocks;
 using NUnit.Framework;
@@ -36,11 +35,19 @@ namespace Discoverer.Logic.Tests.Process
                     new [] { true,  false, false, false },
                     new [] { true,  false, false, false },
                 });
+
+                var defaultMarkerSetGrid = new TestGrid<MarkerSet>(5);
                 
+                for (var i = 0; i < defaultMarkerSetGrid.Size; i++)
+                {
+                    defaultMarkerSetGrid.Set(new TestCoordinate {I = i},
+                        new MarkerSet(null, ImmutableHashSet<int>.Empty));
+                }
+                    
                 var defaultProcessState = new ProcessState
                 (
-                    Actions: new List<GameAction>(),
-                    MarkerSetGrid: new TestGrid<MarkerSet>(5),
+                    Actions: ImmutableList<GameAction>.Empty,
+                    MarkerSetGrid: defaultMarkerSetGrid.ToImmutable(),
                     CurrentPlayerNum: 0,
                     CurrentTurn: 0,
                     GameState: new GameNotStartedState(),
@@ -48,10 +55,18 @@ namespace Discoverer.Logic.Tests.Process
                     PlayerCount: 2
                 );
                 
+                var defaultMarkerSetGridForFourPlayers = new TestGrid<MarkerSet>(5);
+
+                for (var i = 0; i < defaultMarkerSetGridForFourPlayers.Size; i++)
+                {
+                    defaultMarkerSetGridForFourPlayers.Set(new TestCoordinate {I = i},
+                        new MarkerSet(null, ImmutableHashSet<int>.Empty));
+                }
+                
                 var defaultProcessStateForFourPlayers = new ProcessState
                 (
-                    Actions: new List<GameAction>(),
-                    MarkerSetGrid: new TestGrid<MarkerSet>(5),
+                    Actions: ImmutableList<GameAction>.Empty,
+                    MarkerSetGrid: defaultMarkerSetGridForFourPlayers.ToImmutable(),
                     CurrentPlayerNum: 0,
                     CurrentTurn: 0,
                     GameState: new GameNotStartedState(),
@@ -59,22 +74,10 @@ namespace Discoverer.Logic.Tests.Process
                     PlayerCount: 4
                 );
                 
-                for (var i = 0; i < defaultProcessState.MarkerSetGrid.Size; i++)
-                {
-                    defaultProcessState.MarkerSetGrid.Set(new TestCoordinate {I = i},
-                        new MarkerSet(null, ImmutableHashSet<int>.Empty));
-                }
-                
-                for (var i = 0; i < defaultProcessStateForFourPlayers.MarkerSetGrid.Size; i++)
-                {
-                    defaultProcessStateForFourPlayers.MarkerSetGrid.Set(new TestCoordinate {I = i},
-                        new MarkerSet(null, ImmutableHashSet<int>.Empty));
-                }
-                
                 var actions = new List<GameAction>
                 {
                     new GameStartedAction()
-                };
+                }.ToImmutableList();
                 
                 yield return new TestCaseData(
                     defaultProcessState,
@@ -96,7 +99,7 @@ namespace Discoverer.Logic.Tests.Process
                             Actions = new List<GameAction>
                             {
                                 new GameStartedAction()
-                            },
+                            }.ToImmutableList(),
                             GameState = new PlayerPutsImproperCellOnStartState(),
                         }),
                     possibleCells,
@@ -108,15 +111,15 @@ namespace Discoverer.Logic.Tests.Process
                             {
                                 new GameStartedAction(),
                                 new PlayerPutImproperCellOnStartAction(0, new TestCoordinate { I = 1 })
-                            },
+                            }.ToImmutableList(),
                             GameState = new PlayerPutsImproperCellOnStartState(),
                             CurrentPlayerNum = 1,
-                            MarkerSetGrid = Helpers.CopyWithSet(defaultProcessState.MarkerSetGrid, new TestCoordinate { I = 1 }, new MarkerSet(0, ImmutableHashSet<int>.Empty))
+                            MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 1 }, new MarkerSet(0, ImmutableHashSet<int>.Empty))
                         }),
                     new List<GameAction>
                     {
                         new PlayerPutImproperCellOnStartAction(0, new TestCoordinate { I = 1 })
-                    }
+                    }.ToImmutableList()
                 );
                 yield return new TestCaseData(
                     defaultProcessState.Set(
@@ -125,7 +128,7 @@ namespace Discoverer.Logic.Tests.Process
                             Actions = new List<GameAction>
                             {
                                 new GameStartedAction()
-                            },
+                            }.ToImmutableList(),
                             GameState = new PlayerPutsImproperCellOnStartState(),
                             CurrentPlayerNum = 1
                         }),
@@ -138,16 +141,16 @@ namespace Discoverer.Logic.Tests.Process
                             {
                                 new GameStartedAction(),
                                 new PlayerPutImproperCellOnStartAction(1, new TestCoordinate { I = 4 })
-                            },
+                            }.ToImmutableList(),
                             GameState = new PlayerPutsImproperCellOnStartState(),
                             CurrentPlayerNum = 0,
                             CurrentTurn = 1,
-                            MarkerSetGrid = Helpers.CopyWithSet(defaultProcessState.MarkerSetGrid, new TestCoordinate { I = 4 }, new MarkerSet(1, ImmutableHashSet<int>.Empty))
+                            MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 4 }, new MarkerSet(1, ImmutableHashSet<int>.Empty))
                         }),
                     new List<GameAction>
                     {
                         new PlayerPutImproperCellOnStartAction(1, new TestCoordinate { I = 4 })
-                    }
+                    }.ToImmutableList()
                 );
                 yield return new TestCaseData(
                     defaultProcessState.Set(
@@ -156,7 +159,7 @@ namespace Discoverer.Logic.Tests.Process
                             Actions = new List<GameAction>
                             {
                                 new GameStartedAction()
-                            },
+                            }.ToImmutableList(),
                             GameState = new PlayerPutsImproperCellOnStartState(),
                             CurrentPlayerNum = 1,
                             CurrentTurn = 1
@@ -170,16 +173,16 @@ namespace Discoverer.Logic.Tests.Process
                             {
                                 new GameStartedAction(),
                                 new PlayerPutImproperCellOnStartAction(1, new TestCoordinate { I = 4 })
-                            },
+                            }.ToImmutableList(),
                             GameState = new PlayerMakesTurnState(),
                             CurrentPlayerNum = 0,
                             CurrentTurn = 2,
-                            MarkerSetGrid = Helpers.CopyWithSet(defaultProcessState.MarkerSetGrid, new TestCoordinate { I = 4 }, new MarkerSet(1, ImmutableHashSet<int>.Empty))
+                            MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 4 }, new MarkerSet(1, ImmutableHashSet<int>.Empty))
                         }),
                     new List<GameAction>
                     {
                         new PlayerPutImproperCellOnStartAction(1, new TestCoordinate { I = 4 })
-                    }
+                    }.ToImmutableList()
                 );
                 
                 yield return new TestCaseData(
@@ -189,7 +192,7 @@ namespace Discoverer.Logic.Tests.Process
                             Actions = new List<GameAction>
                             {
                                 new GameStartedAction()
-                            },
+                            }.ToImmutableList(),
                             GameState = new PlayerMakesTurnState()
                         }),
                     possibleCells,
@@ -202,16 +205,16 @@ namespace Discoverer.Logic.Tests.Process
                                 new GameStartedAction(),
                                 new PlayerAskedQuestionAction(0, 1, new TestCoordinate { I = 0 }),
                                 new PlayerAnsweredToQuestionAction(0, 1, true, new TestCoordinate { I = 0 })
-                            },
+                            }.ToImmutableList(),
                             GameState = new PlayerMakesTurnState(),
                             CurrentPlayerNum = 1,
-                            MarkerSetGrid = Helpers.CopyWithSet(defaultProcessState.MarkerSetGrid, new TestCoordinate { I = 0 }, new MarkerSet(null, ImmutableHashSet<int>.Empty.Add(1)))
+                            MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 0 }, new MarkerSet(null, ImmutableHashSet<int>.Empty.Add(1)))
                         }),
                     new List<GameAction>
                     {
                         new PlayerAskedQuestionAction(0, 1, new TestCoordinate { I = 0 }),
                         new PlayerAnsweredToQuestionAction(0, 1, true, new TestCoordinate { I = 0 })
-                    }
+                    }.ToImmutableList()
                 );
                 yield return new TestCaseData(
                     defaultProcessState.Set(
@@ -220,7 +223,7 @@ namespace Discoverer.Logic.Tests.Process
                             Actions = new List<GameAction>
                             {
                                 new GameStartedAction()
-                            },
+                            }.ToImmutableList(),
                             GameState = new PlayerMakesTurnState()
                         }),
                     possibleCells,
@@ -233,15 +236,15 @@ namespace Discoverer.Logic.Tests.Process
                                 new GameStartedAction(),
                                 new PlayerAskedQuestionAction(0, 1, new TestCoordinate { I = 4 }),
                                 new PlayerAnsweredToQuestionAction(0, 1, false, new TestCoordinate { I = 4 })
-                            },
+                            }.ToImmutableList(),
                             GameState = new PlayerPutsImproperCellAfterFailState(),
-                            MarkerSetGrid = Helpers.CopyWithSet(defaultProcessState.MarkerSetGrid, new TestCoordinate { I = 4 }, new MarkerSet(1, ImmutableHashSet<int>.Empty))
+                            MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 4 }, new MarkerSet(1, ImmutableHashSet<int>.Empty))
                         }),
                     new List<GameAction>
                     {
                         new PlayerAskedQuestionAction(0, 1, new TestCoordinate { I = 4 }),
                         new PlayerAnsweredToQuestionAction(0, 1, false, new TestCoordinate { I = 4 })
-                    }
+                    }.ToImmutableList()
                 );
                 
                 yield return new TestCaseData(
@@ -251,7 +254,7 @@ namespace Discoverer.Logic.Tests.Process
                             Actions = new List<GameAction>
                             {
                                 new GameStartedAction()
-                            },
+                            }.ToImmutableList(),
                             GameState = new PlayerMakesTurnState()
                         }),
                     possibleCells,
@@ -264,15 +267,15 @@ namespace Discoverer.Logic.Tests.Process
                                 new GameStartedAction(),
                                 new PlayerMadeGuessAction(0, new TestCoordinate { I = 4 }),
                                 new PlayerAnsweredToGuessAction(0, 1, false, new TestCoordinate { I = 4 })
-                            },
+                            }.ToImmutableList(),
                             GameState = new PlayerPutsImproperCellAfterFailState(),
-                            MarkerSetGrid = Helpers.CopyWithSet(defaultProcessState.MarkerSetGrid, new TestCoordinate { I = 4 }, new MarkerSet(1, ImmutableHashSet<int>.Empty.Add(0)))
+                            MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 4 }, new MarkerSet(1, ImmutableHashSet<int>.Empty.Add(0)))
                         }),
                     new List<GameAction>
                     {
                         new PlayerMadeGuessAction(0, new TestCoordinate { I = 4 }),
                         new PlayerAnsweredToGuessAction(0, 1, false, new TestCoordinate { I = 4 })
-                    }
+                    }.ToImmutableList()
                 );
                 yield return new TestCaseData(
                     defaultProcessStateForFourPlayers.Set(
@@ -281,7 +284,7 @@ namespace Discoverer.Logic.Tests.Process
                             Actions = new List<GameAction>
                             {
                                 new GameStartedAction()
-                            },
+                            }.ToImmutableList(),
                             GameState = new PlayerMakesTurnState(),
                             CurrentPlayerNum = 1,
                         }),
@@ -296,17 +299,17 @@ namespace Discoverer.Logic.Tests.Process
                                 new PlayerMadeGuessAction(1, new TestCoordinate { I = 1 }),
                                 new PlayerAnsweredToGuessAction(1, 2, true, new TestCoordinate { I = 1 }),
                                 new PlayerAnsweredToGuessAction(1, 3, false, new TestCoordinate { I = 1 })
-                            },
+                            }.ToImmutableList(),
                             GameState = new PlayerPutsImproperCellAfterFailState(),
                             CurrentPlayerNum = 1,
-                            MarkerSetGrid = Helpers.CopyWithSet(defaultProcessState.MarkerSetGrid, new TestCoordinate { I = 1 }, new MarkerSet(3, ImmutableHashSet<int>.Empty.Add(1).Add(2)))
+                            MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 1 }, new MarkerSet(3, ImmutableHashSet<int>.Empty.Add(1).Add(2)))
                         }),
                     new List<GameAction>
                     {
                         new PlayerMadeGuessAction(1, new TestCoordinate { I = 1 }),
                         new PlayerAnsweredToGuessAction(1, 2, true, new TestCoordinate { I = 1 }),
                         new PlayerAnsweredToGuessAction(1, 3, false, new TestCoordinate { I = 1 })
-                    }
+                    }.ToImmutableList()
                 );
                 yield return new TestCaseData(
                     defaultProcessStateForFourPlayers.Set(
@@ -315,7 +318,7 @@ namespace Discoverer.Logic.Tests.Process
                             Actions = new List<GameAction>
                             {
                                 new GameStartedAction()
-                            },
+                            }.ToImmutableList(),
                             GameState = new PlayerMakesTurnState(),
                             CurrentPlayerNum = 2,
                         }),
@@ -332,10 +335,14 @@ namespace Discoverer.Logic.Tests.Process
                                 new PlayerAnsweredToGuessAction(2, 0, true, new TestCoordinate { I = 2 }),
                                 new PlayerAnsweredToGuessAction(2, 1, true, new TestCoordinate { I = 2 }),
                                 new PlayerWonAction(2)
-                            },
+                            }.ToImmutableList(),
                             GameState = new PlayerWinsGameState(),
                             CurrentPlayerNum = 2,
-                            MarkerSetGrid = Helpers.CopyWithSet(defaultProcessState.MarkerSetGrid, new TestCoordinate { I = 2 }, new MarkerSet(null, ImmutableHashSet<int>.Empty.Add(0).Add(1).Add(2).Add(3)))
+                            MarkerSetGrid = defaultProcessState.MarkerSetGrid
+                                .CopyWithSet(
+                                    new TestCoordinate { I = 2 }, 
+                                    new MarkerSet(null, ImmutableHashSet<int>.Empty
+                                        .Add(0).Add(1).Add(2).Add(3)))
                         }),
                     new List<GameAction>
                     {
@@ -344,7 +351,7 @@ namespace Discoverer.Logic.Tests.Process
                         new PlayerAnsweredToGuessAction(2, 0, true, new TestCoordinate { I = 2 }),
                         new PlayerAnsweredToGuessAction(2, 1, true, new TestCoordinate { I = 2 }),
                         new PlayerWonAction(2)
-                    }
+                    }.ToImmutableList()
                 );
                 
                 yield return new TestCaseData(
@@ -354,7 +361,7 @@ namespace Discoverer.Logic.Tests.Process
                             Actions = new List<GameAction>
                             {
                                 new GameStartedAction()
-                            },
+                            }.ToImmutableList(),
                             GameState = new PlayerPutsImproperCellAfterFailState(),
                         }),
                     possibleCells,
@@ -366,15 +373,15 @@ namespace Discoverer.Logic.Tests.Process
                             {
                                 new GameStartedAction(),
                                 new PlayerPutImproperCellAfterFailAction(0, new TestCoordinate { I = 1 })
-                            },
+                            }.ToImmutableList(),
                             GameState = new PlayerMakesTurnState(),
                             CurrentPlayerNum = 1,
-                            MarkerSetGrid = Helpers.CopyWithSet(defaultProcessState.MarkerSetGrid, new TestCoordinate { I = 1 }, new MarkerSet(0, ImmutableHashSet<int>.Empty))
+                            MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 1 }, new MarkerSet(0, ImmutableHashSet<int>.Empty))
                         }),
                     new List<GameAction>
                     {
                         new PlayerPutImproperCellAfterFailAction(0, new TestCoordinate { I = 1 })
-                    }
+                    }.ToImmutableList()
                 );
                 yield return new TestCaseData(
                     defaultProcessState.Set(
@@ -383,7 +390,7 @@ namespace Discoverer.Logic.Tests.Process
                             Actions = new List<GameAction>
                             {
                                 new GameStartedAction()
-                            },
+                            }.ToImmutableList(),
                             GameState = new PlayerPutsImproperCellAfterFailState(),
                             CurrentPlayerNum = 1
                         }),
@@ -396,16 +403,16 @@ namespace Discoverer.Logic.Tests.Process
                             {
                                 new GameStartedAction(),
                                 new PlayerPutImproperCellAfterFailAction(1, new TestCoordinate { I = 4 })
-                            },
+                            }.ToImmutableList(),
                             GameState = new PlayerMakesTurnState(),
                             CurrentPlayerNum = 0,
                             CurrentTurn = 1,
-                            MarkerSetGrid = Helpers.CopyWithSet(defaultProcessState.MarkerSetGrid, new TestCoordinate { I = 4 }, new MarkerSet(1, ImmutableHashSet<int>.Empty))
+                            MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 4 }, new MarkerSet(1, ImmutableHashSet<int>.Empty))
                         }),
                     new List<GameAction>
                     {
                         new PlayerPutImproperCellAfterFailAction(1, new TestCoordinate { I = 4 })
-                    }
+                    }.ToImmutableList()
                 );
                 yield return new TestCaseData(
                     defaultProcessState.Set(
@@ -414,7 +421,7 @@ namespace Discoverer.Logic.Tests.Process
                             Actions = new List<GameAction>
                             {
                                 new GameStartedAction()
-                            },
+                            }.ToImmutableList(),
                             GameState = new PlayerPutsImproperCellAfterFailState(),
                             CurrentPlayerNum = 1
                         }),
@@ -427,16 +434,16 @@ namespace Discoverer.Logic.Tests.Process
                             {
                                 new GameStartedAction(),
                                 new PlayerPutImproperCellAfterFailAction(1, new TestCoordinate { I = 4 })
-                            },
+                            }.ToImmutableList(),
                             GameState = new PlayerMakesTurnState(),
                             CurrentPlayerNum = 0,
                             CurrentTurn = 1,
-                            MarkerSetGrid = Helpers.CopyWithSet(defaultProcessState.MarkerSetGrid, new TestCoordinate { I = 4 }, new MarkerSet(1, ImmutableHashSet<int>.Empty))
+                            MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 4 }, new MarkerSet(1, ImmutableHashSet<int>.Empty))
                         }),
                     new List<GameAction>
                     {
                         new PlayerPutImproperCellAfterFailAction(1, new TestCoordinate { I = 4 })
-                    }
+                    }.ToImmutableList()
                 );
             }
         }
@@ -444,9 +451,9 @@ namespace Discoverer.Logic.Tests.Process
         [TestCaseSource(nameof(RunCommandTestData))]
         public void RunCommandTestData_ForTestCases_ReturnsCorrect(
             ProcessState processState, TestGrid<bool[]> possibleCells, GameCommand command, 
-            ProcessState expectedResultState, List<GameAction> expectedActions)
+            ProcessState expectedResultState, ImmutableList<GameAction> expectedActions)
         {
-            var updater = new ProcessUpdater(new TestCoordinateHelper());
+            var updater = new ProcessUpdater();
 
             var (resultProcess, actions) = updater.RunCommand(processState, possibleCells, command);
 
@@ -476,8 +483,8 @@ namespace Discoverer.Logic.Tests.Process
                 
                 var defaultProcessState = new ProcessState
                 (
-                    Actions: new List<GameAction>(),
-                    MarkerSetGrid: new TestGrid<MarkerSet>(5),
+                    Actions: ImmutableList<GameAction>.Empty,
+                    MarkerSetGrid: new TestGrid<MarkerSet>(5).ToImmutable(),
                     CurrentPlayerNum: 0,
                     CurrentTurn: 0,
                     GameState: new GameNotStartedState(),
@@ -545,7 +552,7 @@ namespace Discoverer.Logic.Tests.Process
                     defaultProcessState.Set(new ProcessUpdate
                     {
                         GameState = new PlayerPutsImproperCellOnStartState(),
-                        MarkerSetGrid = Helpers.CopyWithSet(defaultProcessState.MarkerSetGrid, new TestCoordinate { I = 0 }, new MarkerSet(1, ImmutableHashSet<int>.Empty))
+                        MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 0 }, new MarkerSet(1, ImmutableHashSet<int>.Empty))
                     }),
                     possibleCells,
                     new PutImproperCellOnStartCommand(new TestCoordinate { I = 0 }),
@@ -581,7 +588,7 @@ namespace Discoverer.Logic.Tests.Process
                     defaultProcessState.Set(new ProcessUpdate
                     {
                         GameState = new PlayerMakesTurnState(),
-                        MarkerSetGrid = Helpers.CopyWithSet(defaultProcessState.MarkerSetGrid, new TestCoordinate { I = 0 }, new MarkerSet(0, ImmutableHashSet<int>.Empty))
+                        MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 0 }, new MarkerSet(0, ImmutableHashSet<int>.Empty))
                     }),
                     possibleCells,
                     new AskQuestionCommand(1, new TestCoordinate { I = 0 }),
@@ -591,7 +598,7 @@ namespace Discoverer.Logic.Tests.Process
                     defaultProcessState.Set(new ProcessUpdate
                     {
                         GameState = new PlayerMakesTurnState(),
-                        MarkerSetGrid = Helpers.CopyWithSet(defaultProcessState.MarkerSetGrid, new TestCoordinate { I = 0 }, new MarkerSet(1, ImmutableHashSet<int>.Empty))
+                        MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 0 }, new MarkerSet(1, ImmutableHashSet<int>.Empty))
                     }),
                     possibleCells,
                     new AskQuestionCommand(1, new TestCoordinate { I = 0 }),
@@ -601,7 +608,7 @@ namespace Discoverer.Logic.Tests.Process
                     defaultProcessState.Set(new ProcessUpdate
                     {
                         GameState = new PlayerMakesTurnState(),
-                        MarkerSetGrid = Helpers.CopyWithSet(defaultProcessState.MarkerSetGrid, new TestCoordinate { I = 0 }, new MarkerSet(null, ImmutableHashSet<int>.Empty.Add(1)))
+                        MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 0 }, new MarkerSet(null, ImmutableHashSet<int>.Empty.Add(1)))
                     }),
                     possibleCells,
                     new AskQuestionCommand(1, new TestCoordinate { I = 0 }),
@@ -611,7 +618,7 @@ namespace Discoverer.Logic.Tests.Process
                     defaultProcessState.Set(new ProcessUpdate
                     {
                         GameState = new PlayerMakesTurnState(),
-                        MarkerSetGrid = Helpers.CopyWithSet(defaultProcessState.MarkerSetGrid, new TestCoordinate { I = 4 }, new MarkerSet(0, ImmutableHashSet<int>.Empty))
+                        MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 4 }, new MarkerSet(0, ImmutableHashSet<int>.Empty))
                     }),
                     possibleCells,
                     new MakeGuessCommand(new TestCoordinate { I = 4 }),
@@ -621,7 +628,7 @@ namespace Discoverer.Logic.Tests.Process
                     defaultProcessState.Set(new ProcessUpdate
                     {
                         GameState = new PlayerMakesTurnState(),
-                        MarkerSetGrid = Helpers.CopyWithSet(defaultProcessState.MarkerSetGrid, new TestCoordinate { I = 4 }, new MarkerSet(1, ImmutableHashSet<int>.Empty))
+                        MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 4 }, new MarkerSet(1, ImmutableHashSet<int>.Empty))
                     }),
                     possibleCells,
                     new MakeGuessCommand(new TestCoordinate { I = 4 }),
@@ -669,7 +676,7 @@ namespace Discoverer.Logic.Tests.Process
                     defaultProcessState.Set(new ProcessUpdate
                     {
                         GameState = new PlayerPutsImproperCellAfterFailState(),
-                        MarkerSetGrid = Helpers.CopyWithSet(defaultProcessState.MarkerSetGrid, new TestCoordinate { I = 0 }, new MarkerSet(0, ImmutableHashSet<int>.Empty))
+                        MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 0 }, new MarkerSet(0, ImmutableHashSet<int>.Empty))
                     }),
                     possibleCells,
                     new PutImproperCellAfterFailCommand(new TestCoordinate { I = 0 }),
@@ -679,7 +686,7 @@ namespace Discoverer.Logic.Tests.Process
                     defaultProcessState.Set(new ProcessUpdate
                     {
                         GameState = new PlayerPutsImproperCellAfterFailState(),
-                        MarkerSetGrid = Helpers.CopyWithSet(defaultProcessState.MarkerSetGrid, new TestCoordinate { I = 0 }, new MarkerSet(1, ImmutableHashSet<int>.Empty))
+                        MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 0 }, new MarkerSet(1, ImmutableHashSet<int>.Empty))
                     }),
                     possibleCells,
                     new PutImproperCellAfterFailCommand(new TestCoordinate { I = 0 }),
@@ -724,7 +731,7 @@ namespace Discoverer.Logic.Tests.Process
             ProcessState processState, TestGrid<bool[]> possibleCells, GameCommand command, 
             Type expectedExceptionType)
         {
-            var updater = new ProcessUpdater(new TestCoordinateHelper());
+            var updater = new ProcessUpdater();
 
             Assert.Throws(expectedExceptionType, () => updater.RunCommand(processState, possibleCells, command));
         }

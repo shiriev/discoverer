@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using Discoverer.Logic.GameContract;
 using Discoverer.Logic.Grid;
 
@@ -11,13 +12,13 @@ namespace Discoverer.Logic.Process
 
         void LoadState(GameCast gameCast);
         
-        List<GameAction> RunCommand(GameCommand command);
+        ImmutableList<GameAction> RunCommand(GameCommand command);
         
         IGrid<bool> GetPossibleCellsFor(int playerNum);
         
         GameState GetGameState();
         
-        List<GameAction> GetAllActions();
+        ImmutableList<GameAction> GetAllActions();
         
         int GetCurrentPlayer();
         

@@ -6,7 +6,7 @@ namespace Discoverer.Logic.GameContract
 {
     public class Level
     {
-        public IGrid<Region> Grid { get; set; }
+        public ImmutableGrid<Region> Grid { get; set; }
         
         public EHint[] Hints { get; set; }
         
