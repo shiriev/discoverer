@@ -10,7 +10,7 @@ namespace Discoverer.Logic.Process
 {
     public class GameBuilder
     {
-        public GameProcess Create(GameSettings settings)
+        public Game Create(GameSettings settings)
         {
             var generator = new LevelGenerator();
             var level = generator.Generate(settings);
@@ -21,7 +21,7 @@ namespace Discoverer.Logic.Process
                     : new IsometricBuilder(settings.Width, settings.Height);
 
             var processUpdater = new ProcessUpdater();
-            var game = new GameProcess(gridBuilder, processUpdater, HintFunctions.SimpleModeFunctions);
+            var game = new Game(gridBuilder, processUpdater, HintFunctions.SimpleModeFunctions);
             game.Init(level, settings);
 
             return game;

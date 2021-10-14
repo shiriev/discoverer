@@ -12,7 +12,7 @@ using Discoverer.Logic.Settings;
 
 namespace Discoverer.Logic.Process
 {
-    public partial class GameProcess : IGameProcess
+    public partial class Game : IGame
     {
         private Level _level;
         private ProcessState _processState;
@@ -25,7 +25,7 @@ namespace Discoverer.Logic.Process
         // TODO: Make tests
         // TODO: Complete class
         // TODO: Make ctor instead of Init and LoadState
-        public GameProcess(IGridBuilder gridBuilder, IProcessUpdater processUpdater, Dictionary<EHint, Func<IImmutableGrid<Region>, ICoordinate, bool>> hintFunctions)
+        public Game(IGridBuilder gridBuilder, IProcessUpdater processUpdater, Dictionary<EHint, Func<IImmutableGrid<Region>, ICoordinate, bool>> hintFunctions)
         {
             _gridBuilder = gridBuilder;
             _processUpdater = processUpdater;

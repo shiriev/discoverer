@@ -6,7 +6,7 @@ using Discoverer.Logic.Grid.Isometric;
 
 namespace Discoverer.Logic.Process
 {
-    public partial class GameProcess
+    public partial class Game
     {
         private HexHelper? _hex;
         private IsometricHelper? _isometric;
@@ -18,23 +18,23 @@ namespace Discoverer.Logic.Process
     
     public class HexHelper
     {
-        private readonly GameProcess _gameProcess;
-        public HexHelper(GameProcess gameProcess)
+        private readonly Game _game;
+        public HexHelper(Game game)
         {
-            _gameProcess = gameProcess;
+            _game = game;
         }
         
-        public HexCoordinate Grail => _gameProcess.GetGrail() as HexCoordinate ?? throw new ArgumentException();
+        public HexCoordinate Grail => _game.GetGrail() as HexCoordinate ?? throw new ArgumentException();
         
-        public HexGrid<Region> RegionGrid => _gameProcess.GetRegionGrid() as HexGrid<Region> ?? throw new ArgumentException();
+        public HexGrid<Region> RegionGrid => _game.GetRegionGrid() as HexGrid<Region> ?? throw new ArgumentException();
         
-        public HexGrid<MarkerSet> MarkerSetGrid => _gameProcess.GetMarkerSetGrid() as HexGrid<MarkerSet> ?? throw new ArgumentException();
+        public HexGrid<MarkerSet> MarkerSetGrid => _game.GetMarkerSetGrid() as HexGrid<MarkerSet> ?? throw new ArgumentException();
     }
     
     public class IsometricHelper
     {
-        private readonly GameProcess _gameProcess;
-        public IsometricHelper(GameProcess gameProcess)
+        private readonly Game _gameProcess;
+        public IsometricHelper(Game gameProcess)
         {
             _gameProcess = gameProcess;
         }

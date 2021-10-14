@@ -108,7 +108,7 @@ namespace Discoverer.ConsoleApp
             };
         }
 
-        static void Draw(GameProcess game)
+        static void Draw(Game game)
         {
             if (game.GetGridType() == EGridType.Hex)
             {

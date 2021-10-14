@@ -6,7 +6,7 @@ using Discoverer.Logic.Grid;
 
 namespace Discoverer.Logic.Process
 {
-    public interface IGameProcess
+    public interface IGame
     {
         GameCast SaveState();
 
