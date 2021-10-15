@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Discoverer.Logic.GameContract;
-using Discoverer.Logic.GameContract.Actions;
-using Discoverer.Logic.GameContract.Commands;
-using Discoverer.Logic.GameContract.GameStates;
+using Discoverer.Logic.Contracts;
+using Discoverer.Logic.Contracts.Actions;
+using Discoverer.Logic.Contracts.Commands;
+using Discoverer.Logic.Contracts.GameStates;
 using Discoverer.Logic.Grid;
+using Discoverer.Logic.Process.Contracts;
 
 namespace Discoverer.Logic.Process
 {
-    public class ProcessUpdater : IProcessUpdater
+    internal sealed class ProcessUpdater : IProcessUpdater
     {
         public (ProcessState, ImmutableList<GameAction>) RunCommand(ProcessState processState, IGrid<bool[]> possibleCells, GameCommand command)
         {

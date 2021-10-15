@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
-using Discoverer.Logic.GameContract;
+using Discoverer.Logic.Contracts;
+using Discoverer.Logic.Contracts.Enums;
 using Discoverer.Logic.Grid;
 using Discoverer.Logic.Grid.Hex;
 using Discoverer.Logic.Grid.Isometric;
@@ -9,7 +10,7 @@ using Discoverer.Logic.Settings;
 
 namespace Discoverer.Logic.Generator
 {
-    public class LevelGenerator : ILevelGenerator
+    internal sealed class LevelGenerator : ILevelGenerator
     {
         private const int AttemptMaxCount = 20;
         

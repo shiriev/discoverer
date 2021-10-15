@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Discoverer.Logic.CellContract;
+using Discoverer.Logic.Contracts;
+using Discoverer.Logic.Contracts.Enums;
 using Discoverer.Logic.Grid;
 
 namespace Discoverer.Logic.Generator
 {
-    internal class GridGeneratorConstants
+    internal sealed class GridGeneratorConstants
     {
         
     }
 
-    internal class GridGenerator
+    internal sealed class GridGenerator
     {
         // TODO: Get counts of object from outside
         

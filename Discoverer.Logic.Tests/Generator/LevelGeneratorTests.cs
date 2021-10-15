@@ -1,5 +1,5 @@
 ﻿using System;
-using Discoverer.Logic.GameContract;
+using Discoverer.Logic.Contracts.Enums;
 using Discoverer.Logic.Generator;
 using Discoverer.Logic.Settings;
 using NUnit.Framework;

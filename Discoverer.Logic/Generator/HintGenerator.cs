@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Discoverer.Logic.CellContract;
+using Discoverer.Logic.Contracts;
 using Discoverer.Logic.Grid;
 using Discoverer.Logic.Hints;
 
 namespace Discoverer.Logic.Generator
 {
-    internal class HintGenerator
+    internal sealed class HintGenerator
     {
         private static bool Increase(ref int[] poses, int length)
         {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using Discoverer.Logic.GameContract;
+using Discoverer.Logic.Contracts;
 using Discoverer.Logic.Grid;
 
 namespace Discoverer.Logic.Process

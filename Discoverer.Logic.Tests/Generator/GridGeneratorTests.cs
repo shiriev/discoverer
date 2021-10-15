@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
-using Discoverer.Logic.CellContract;
+using Discoverer.Logic.Contracts;
+using Discoverer.Logic.Contracts.Enums;
 using Discoverer.Logic.Generator;
 using Discoverer.Logic.Grid;
 using Discoverer.Logic.Tests.Mocks;

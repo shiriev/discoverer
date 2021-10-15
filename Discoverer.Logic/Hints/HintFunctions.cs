@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Discoverer.Logic.CellContract;
+using Discoverer.Logic.Contracts;
+using Discoverer.Logic.Contracts.Enums;
 using Discoverer.Logic.Grid;
 
 namespace Discoverer.Logic.Hints

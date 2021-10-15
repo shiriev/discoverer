@@ -1,6 +1,5 @@
 ﻿using System;
-using Discoverer.Logic.CellContract;
-using Discoverer.Logic.GameContract;
+using Discoverer.Logic.Contracts;
 using Discoverer.Logic.Grid.Hex;
 using Discoverer.Logic.Grid.Isometric;
 

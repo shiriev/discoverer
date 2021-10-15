@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Discoverer.Logic.CellContract;
-using Discoverer.Logic.GameContract;
-using Discoverer.Logic.GameContract.Actions;
-using Discoverer.Logic.GameContract.Commands;
-using Discoverer.Logic.GameContract.GameStates;
-using Discoverer.Logic.Generator;
-using Discoverer.Logic.Grid;
+using Discoverer.Logic.Contracts;
+using Discoverer.Logic.Contracts.Actions;
+using Discoverer.Logic.Contracts.Commands;
+using Discoverer.Logic.Contracts.Enums;
 using Discoverer.Logic.Grid.Hex;
 using Discoverer.Logic.Grid.Isometric;
-using Discoverer.Logic.Hints;
 using Discoverer.Logic.Process;
 using Discoverer.Logic.Settings;
 

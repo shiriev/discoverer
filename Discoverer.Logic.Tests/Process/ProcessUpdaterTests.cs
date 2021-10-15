@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using Discoverer.Logic.GameContract;
-using Discoverer.Logic.GameContract.Actions;
-using Discoverer.Logic.GameContract.Commands;
-using Discoverer.Logic.GameContract.GameStates;
+using Discoverer.Logic.Contracts;
+using Discoverer.Logic.Contracts.Actions;
+using Discoverer.Logic.Contracts.Commands;
+using Discoverer.Logic.Contracts.GameStates;
 using Discoverer.Logic.Grid;
 using Discoverer.Logic.Process;
+using Discoverer.Logic.Process.Contracts;
 using Discoverer.Logic.Tests.Mocks;
 using NUnit.Framework;
 
@@ -450,9 +451,11 @@ namespace Discoverer.Logic.Tests.Process
         
         [TestCaseSource(nameof(RunCommandTestData))]
         public void RunCommandTestData_ForTestCases_ReturnsCorrect(
-            ProcessState processState, TestGrid<bool[]> possibleCells, GameCommand command, 
-            ProcessState expectedResultState, ImmutableList<GameAction> expectedActions)
+            object processStateObject, TestGrid<bool[]> possibleCells, GameCommand command, 
+            object expectedResultStateObject, ImmutableList<GameAction> expectedActions)
         {
+            var processState = (ProcessState) processStateObject;
+            var expectedResultState = (ProcessState) expectedResultStateObject;
             var updater = new ProcessUpdater();
 
             var (resultProcess, actions) = updater.RunCommand(processState, possibleCells, command);
@@ -728,9 +731,10 @@ namespace Discoverer.Logic.Tests.Process
         
         [TestCaseSource(nameof(RunCommandErrorsTestData))]
         public void RunCommandTestData_ForTestCases_Throws(
-            ProcessState processState, TestGrid<bool[]> possibleCells, GameCommand command, 
+            object processStateObject, TestGrid<bool[]> possibleCells, GameCommand command, 
             Type expectedExceptionType)
         {
+            var processState = (ProcessState) processStateObject;
             var updater = new ProcessUpdater();
 
             Assert.Throws(expectedExceptionType, () => updater.RunCommand(processState, possibleCells, command));

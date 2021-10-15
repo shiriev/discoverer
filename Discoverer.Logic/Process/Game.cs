@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Discoverer.Logic.CellContract;
-using Discoverer.Logic.GameContract;
-using Discoverer.Logic.GameContract.Commands;
-using Discoverer.Logic.GameContract.GameStates;
+using Discoverer.Logic.Contracts;
+using Discoverer.Logic.Contracts.Commands;
+using Discoverer.Logic.Contracts.Enums;
+using Discoverer.Logic.Contracts.GameStates;
 using Discoverer.Logic.Grid;
 using Discoverer.Logic.Hints;
+using Discoverer.Logic.Process.Contracts;
 using Discoverer.Logic.Settings;
 
 namespace Discoverer.Logic.Process
@@ -25,7 +26,7 @@ namespace Discoverer.Logic.Process
         // TODO: Make tests
         // TODO: Complete class
         // TODO: Make ctor instead of Init and LoadState
-        public Game(IGridBuilder gridBuilder, IProcessUpdater processUpdater, Dictionary<EHint, Func<IImmutableGrid<Region>, ICoordinate, bool>> hintFunctions)
+        internal Game(IGridBuilder gridBuilder, IProcessUpdater processUpdater, Dictionary<EHint, Func<IImmutableGrid<Region>, ICoordinate, bool>> hintFunctions)
         {
             _gridBuilder = gridBuilder;
             _processUpdater = processUpdater;
@@ -36,17 +37,38 @@ namespace Discoverer.Logic.Process
         {
             return new GameCast
             {
-                Level = _level,
-                ProcessState = _processState,
+                Grid = _level.Grid,
+                Hints = _level.Hints,
+                Grail = _level.Grail,
+                Actions = _processState.Actions,
+                MarkerSetGrid = _processState.MarkerSetGrid,
+                CurrentPlayerNum = _processState.CurrentPlayerNum,
+                CurrentTurn = _processState.CurrentTurn,
+                GameState = _processState.GameState,
+                PlayerCount = _processState.PlayerCount,
+                GameId = _processState.GameId,
                 GameSettings = _gameSettings
             };
         }
 
         public void LoadState(GameCast gameCast)
         {
-            _level = gameCast.Level;
+            _level = new Level
+            {
+                Grid = _level.Grid,
+                Hints = _level.Hints,
+                Grail = _level.Grail
+            };
+            _processState = new ProcessState(
+                Actions: _processState.Actions,
+                MarkerSetGrid: _processState.MarkerSetGrid,
+                CurrentPlayerNum: _processState.CurrentPlayerNum,
+                CurrentTurn: _processState.CurrentTurn,
+                GameState: _processState.GameState,
+                PlayerCount: _processState.PlayerCount,
+                GameId: _processState.GameId
+            );
             _gameSettings = gameCast.GameSettings;
-            _processState = gameCast.ProcessState;
             
             InitPossibleCells();
         }
@@ -63,7 +85,7 @@ namespace Discoverer.Logic.Process
             return actions;
         }
 
-        public void Init(Level level, GameSettings gameSettings)
+        internal void Init(Level level, GameSettings gameSettings)
         {
             _level = level;
             _gameSettings = gameSettings;

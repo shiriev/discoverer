@@ -1,4 +1,4 @@
-﻿using Discoverer.Logic.GameContract;
+﻿using Discoverer.Logic.Contracts.Enums;
 
 namespace Discoverer.Logic.Settings
 {

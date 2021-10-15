@@ -1,4 +1,4 @@
-﻿using Discoverer.Logic.GameContract;
+﻿using Discoverer.Logic.Contracts.Enums;
 using Discoverer.Logic.Generator;
 using Discoverer.Logic.Grid;
 using Discoverer.Logic.Grid.Hex;
