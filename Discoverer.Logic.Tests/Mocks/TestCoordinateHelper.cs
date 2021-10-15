@@ -20,5 +20,10 @@ namespace Discoverer.Logic.Tests.Mocks
 
             return testA.I == testB.I;
         }
+
+        public string GetUniqueCode(ICoordinate c)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

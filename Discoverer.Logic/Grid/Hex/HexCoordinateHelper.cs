@@ -33,5 +33,12 @@ namespace Discoverer.Logic.Grid.Hex
 
             return hexA.X == hexB.X && hexA.Y == hexB.Y;
         }
+
+        public string GetUniqueCode(ICoordinate coordinate)
+        {
+            if (coordinate is not HexCoordinate hex) throw new ArgumentException(nameof(coordinate));
+
+            return $"{hex.X}_{hex.Y}";
+        }
     }
 }

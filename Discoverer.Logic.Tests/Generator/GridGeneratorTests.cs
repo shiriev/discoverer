@@ -40,6 +40,13 @@ namespace Discoverer.Logic.Tests.Generator
                 .Returns(new TestCoordinate { I = 9 });
             var coordinateHelperMock = new Mock<ICoordinateHelper>();
             coordinateHelperMock.Setup(_ => _.CalculateDistance(It.IsAny<TestCoordinate>(), It.IsAny<TestCoordinate>())).Returns(1);
+            coordinateHelperMock.SetupSequence(_ => _.GetUniqueCode(It.IsAny<TestCoordinate>()))
+                .Returns("a")
+                .Returns("b")
+                .Returns("c")
+                .Returns("d")
+                .Returns("e");
+            
             var regionGridMock = new Mock<IGrid<Region>>();
             regionGridMock.Setup(_ => _.Items).Returns(Enumerable.Empty<(ICoordinate, Region)>());
             regionGridMock.Setup(_ => _.Size).Returns(10);

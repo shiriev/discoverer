@@ -62,7 +62,8 @@ namespace Discoverer.Logic.Generator
                 (
                     Terrain: terrains.Get(coord),
                     Habitat: habitats.Get(coord),
-                    Building: buildings.TryGetValue(coord, out var b) ? b : null
+                    Building: buildings.TryGetValue(_coordinateHelper.GetUniqueCode(coord), out var t) 
+                        ? t.Item2 : null
                 ));
             }
 
@@ -154,21 +155,21 @@ namespace Discoverer.Logic.Generator
             return habitats;
         }
 
-        //TODO: do not use Equals of coordinate
-        private Dictionary<ICoordinate, Building> GenerateBuildings()
+        private Dictionary<string, (ICoordinate, Building)> GenerateBuildings()
         {
-            var buildings = new Dictionary<ICoordinate, Building>();
+            var buildings = new Dictionary<string, (ICoordinate, Building)>();
             
             for (var i = 0; i < DefaultBuilding.Length; ++i)
             {
                 var coord = _randomCoordinate.Next();
-                if (buildings.ContainsKey(coord))
+                var code = _coordinateHelper.GetUniqueCode(coord);
+                if (buildings.ContainsKey(code))
                 {
                     --i;
                 }
                 else
                 {
-                    buildings[coord] = DefaultBuilding[i];
+                    buildings[code] = (coord, DefaultBuilding[i]);
                 }
             }
 

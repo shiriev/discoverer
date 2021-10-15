@@ -5,5 +5,7 @@
         int CalculateDistance(ICoordinate a, ICoordinate b);
 
         bool SamePoint(ICoordinate a, ICoordinate b);
+        
+        string GetUniqueCode(ICoordinate c);
     }
 }

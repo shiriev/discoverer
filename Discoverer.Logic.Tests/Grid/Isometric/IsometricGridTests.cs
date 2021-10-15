@@ -70,10 +70,13 @@ namespace Discoverer.Logic.Tests.Grid.Isometric
         [TestCaseSource(nameof(NearItemsTestCaseData))]
         public void NearItems_ForTestCases_ReturnsCorrectItems(int width, int height, int x, int y, int distance, IsometricCoordinate[] expected)
         {
+            var coordinateHelper = new IsometricCoordinateHelper();
             var grid = new IsometricGrid<int>(width, height);
             var result = grid.NearItems(new IsometricCoordinate{ X = x, Y = y}, distance);
 
-            CollectionAssert.AreEquivalent(expected, result.Select(t => t.Item1));
+            CollectionAssert.AreEquivalent(
+                expected.Select(c => coordinateHelper.GetUniqueCode(c)), 
+                result.Select(t => coordinateHelper.GetUniqueCode(t.Item1)));
         }
         
         [TestCase(5, 5)]
@@ -132,7 +135,8 @@ namespace Discoverer.Logic.Tests.Grid.Isometric
         [TestCase(5, 1)]
         [TestCase(1, 1)]
         public void Items_ForTestCases_ReturnsCollection(int width, int height)
-        {
+        {            
+            var coordinateHelper = new IsometricCoordinateHelper();
             var grid = new IsometricGrid<(int, int)>(width, height);
             var result = grid.Items;
 
@@ -151,7 +155,9 @@ namespace Discoverer.Logic.Tests.Grid.Isometric
                         .Select(y => (new IsometricCoordinate {X = x, Y = y}, (x, y)))
                     );
             
-            CollectionAssert.AreEquivalent(expected, grid.Items);
+            CollectionAssert.AreEquivalent(
+                expected.Select(t => (coordinateHelper.GetUniqueCode(t.Item1), t.Item2)), 
+                grid.Items.Select(t => (coordinateHelper.GetUniqueCode(t.Item1), t.Item2)));
         }
         
         [TestCase(5, 5)]
@@ -160,6 +166,7 @@ namespace Discoverer.Logic.Tests.Grid.Isometric
         [TestCase(1, 1)]
         public void Distance_ForTestCases_ReturnsCollection(int width, int height)
         {
+            var coordinateHelper = new IsometricCoordinateHelper();
             var grid = new IsometricGrid<(int, int)>(width, height);
             var result = grid.Items;
 
@@ -178,7 +185,9 @@ namespace Discoverer.Logic.Tests.Grid.Isometric
                             .Select(y => (new IsometricCoordinate {X = x, Y = y}, (x, y)))
                     );
             
-            CollectionAssert.AreEquivalent(expected, grid.Items);
+            CollectionAssert.AreEquivalent(
+                expected.Select(t => (coordinateHelper.GetUniqueCode(t.Item1), t.Item2)), 
+                grid.Items.Select(t => (coordinateHelper.GetUniqueCode(t.Item1), t.Item2)));
         }
         
         [TestCase(10, 10, 100)]
@@ -198,6 +207,7 @@ namespace Discoverer.Logic.Tests.Grid.Isometric
         [Test]
         public void Copy_ForGrid_MakeFullCopy()
         {
+            var coordinateHelper = new IsometricCoordinateHelper();
             var grid = new IsometricGrid<(int, int)>(5, 5);
 
             for (var x = 0; x < 5; x++)
@@ -211,7 +221,9 @@ namespace Discoverer.Logic.Tests.Grid.Isometric
             var newGrid = grid.Copy();
             
             Assert.IsInstanceOf(typeof(IsometricGrid<(int, int)>), newGrid);
-            CollectionAssert.AreEqual(grid.Items, newGrid.Items);
+            CollectionAssert.AreEqual(
+                grid.Items.Select(t => (coordinateHelper.GetUniqueCode(t.Item1), t.Item2)), 
+                newGrid.Items.Select(t => (coordinateHelper.GetUniqueCode(t.Item1), t.Item2)));
         }
         
         [Test]

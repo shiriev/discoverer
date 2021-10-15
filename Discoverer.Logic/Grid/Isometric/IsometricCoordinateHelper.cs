@@ -19,5 +19,12 @@ namespace Discoverer.Logic.Grid.Isometric
 
             return isoA.X == isoB.X && isoA.Y == isoB.Y;
         }
+        
+        public string GetUniqueCode(ICoordinate coordinate)
+        {
+            if (coordinate is not IsometricCoordinate iso) throw new ArgumentException(nameof(coordinate));
+
+            return $"{iso.X}_{iso.Y}";
+        }
     }
 }
