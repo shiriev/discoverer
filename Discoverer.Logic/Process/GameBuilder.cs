@@ -20,8 +20,8 @@ namespace Discoverer.Logic.Process
                     ? new HexBuilder(settings.Width, settings.Height) 
                     : new IsometricBuilder(settings.Width, settings.Height);
 
-            var processUpdater = new ProcessUpdater();
-            var game = new Game(gridBuilder, processUpdater, HintFunctions.SimpleModeFunctions);
+            var gameStateUpdater = new GameStateUpdater();
+            var game = new Game(gridBuilder, gameStateUpdater, HintFunctions.SimpleModeFunctions);
             game.Init(level, settings);
 
             return game;

@@ -11,7 +11,7 @@ using Discoverer.Logic.Process.Contracts;
 
 namespace Discoverer.Logic.Process
 {
-    internal sealed class ProcessUpdater : IProcessUpdater
+    internal sealed class GameStateUpdater : IGameStateUpdater
     {
         public (GameCast, ImmutableList<GameAction>) RunCommand(GameCast gameCast, IGrid<bool[]> possibleCells, GameCommand command)
         {

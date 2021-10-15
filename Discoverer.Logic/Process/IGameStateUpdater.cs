@@ -5,7 +5,7 @@ using Discoverer.Logic.Process.Contracts;
 
 namespace Discoverer.Logic.Process
 {
-    internal interface IProcessUpdater
+    internal interface IGameStateUpdater
     {
         (GameCast, ImmutableList<GameAction>) RunCommand(GameCast gameCast, IGrid<bool[]> possibleCells,
             GameCommand command);

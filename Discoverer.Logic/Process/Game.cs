@@ -20,16 +20,16 @@ namespace Discoverer.Logic.Process
         private IGrid<bool[]> _possibleCells;
         private GameSettings _gameSettings;
         private readonly IGridBuilder _gridBuilder;
-        private readonly IProcessUpdater _processUpdater;
+        private readonly IGameStateUpdater _gameStateUpdater;
         private readonly Dictionary<EHint, Func<IImmutableGrid<Region>, ICoordinate, bool>> _hintFunctions;
         
         // TODO: Make tests
         // TODO: Complete class
         // TODO: Make ctor instead of Init and LoadState
-        internal Game(IGridBuilder gridBuilder, IProcessUpdater processUpdater, Dictionary<EHint, Func<IImmutableGrid<Region>, ICoordinate, bool>> hintFunctions)
+        internal Game(IGridBuilder gridBuilder, IGameStateUpdater gameStateUpdater, Dictionary<EHint, Func<IImmutableGrid<Region>, ICoordinate, bool>> hintFunctions)
         {
             _gridBuilder = gridBuilder;
-            _processUpdater = processUpdater;
+            _gameStateUpdater = gameStateUpdater;
             _hintFunctions = hintFunctions;
         }
 
@@ -75,12 +75,12 @@ namespace Discoverer.Logic.Process
         
         public bool GetCommandPossibility(GameCommand command)
         {
-            return _processUpdater.GetCommandPossibility(_gameCast, _possibleCells, command);
+            return _gameStateUpdater.GetCommandPossibility(_gameCast, _possibleCells, command);
         }
 
         public ImmutableList<GameAction> RunCommand(GameCommand command)
         {
-            var (gameCast, actions) = _processUpdater.RunCommand(_gameCast, _possibleCells, command);
+            var (gameCast, actions) = _gameStateUpdater.RunCommand(_gameCast, _possibleCells, command);
             _gameCast = gameCast;
             return actions;
         }

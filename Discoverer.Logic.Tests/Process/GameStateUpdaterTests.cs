@@ -13,7 +13,7 @@ using NUnit.Framework;
 
 namespace Discoverer.Logic.Tests.Process
 {
-    public class ProcessUpdaterTests
+    public class GameStateUpdaterTests
     {
         public static IEnumerable<TestCaseData> RunCommandTestData
         {
@@ -456,7 +456,7 @@ namespace Discoverer.Logic.Tests.Process
         {
             var gameCast = (GameCast) gameCastObject;
             var expectedResultState = (GameCast) expectedResultStateObject;
-            var updater = new ProcessUpdater();
+            var updater = new GameStateUpdater();
 
             var (resultProcess, actions) = updater.RunCommand(gameCast, possibleCells, command);
 
@@ -735,7 +735,7 @@ namespace Discoverer.Logic.Tests.Process
             Type expectedExceptionType)
         {
             var gameCast = (GameCast) gameCastObject;
-            var updater = new ProcessUpdater();
+            var updater = new GameStateUpdater();
 
             Assert.Throws(expectedExceptionType, () => updater.RunCommand(gameCast, possibleCells, command));
         }
