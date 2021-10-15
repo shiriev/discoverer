@@ -16,7 +16,7 @@ namespace Discoverer.Logic.Process
     public partial class Game : IGame
     {
         private Level _level;
-        private ProcessState _processState;
+        private GameCast _gameCast;
         private IGrid<bool[]> _possibleCells;
         private GameSettings _gameSettings;
         private readonly IGridBuilder _gridBuilder;
@@ -33,25 +33,25 @@ namespace Discoverer.Logic.Process
             _hintFunctions = hintFunctions;
         }
 
-        public GameCast SaveState()
+        public GameSave SaveState()
         {
-            return new GameCast
+            return new GameSave
             {
                 Grid = _level.Grid,
                 Hints = _level.Hints,
                 Grail = _level.Grail,
-                Actions = _processState.Actions,
-                MarkerSetGrid = _processState.MarkerSetGrid,
-                CurrentPlayerNum = _processState.CurrentPlayerNum,
-                CurrentTurn = _processState.CurrentTurn,
-                GameState = _processState.GameState,
-                PlayerCount = _processState.PlayerCount,
-                GameId = _processState.GameId,
+                Actions = _gameCast.Actions,
+                MarkerSetGrid = _gameCast.MarkerSetGrid,
+                CurrentPlayerNum = _gameCast.CurrentPlayerNum,
+                CurrentTurn = _gameCast.CurrentTurn,
+                GameState = _gameCast.GameState,
+                PlayerCount = _gameCast.PlayerCount,
+                GameId = _gameCast.GameId,
                 GameSettings = _gameSettings
             };
         }
 
-        public void LoadState(GameCast gameCast)
+        public void LoadState(GameSave gameSave)
         {
             _level = new Level
             {
@@ -59,29 +59,29 @@ namespace Discoverer.Logic.Process
                 Hints = _level.Hints,
                 Grail = _level.Grail
             };
-            _processState = new ProcessState(
-                Actions: _processState.Actions,
-                MarkerSetGrid: _processState.MarkerSetGrid,
-                CurrentPlayerNum: _processState.CurrentPlayerNum,
-                CurrentTurn: _processState.CurrentTurn,
-                GameState: _processState.GameState,
-                PlayerCount: _processState.PlayerCount,
-                GameId: _processState.GameId
+            _gameCast = new GameCast(
+                Actions: _gameCast.Actions,
+                MarkerSetGrid: _gameCast.MarkerSetGrid,
+                CurrentPlayerNum: _gameCast.CurrentPlayerNum,
+                CurrentTurn: _gameCast.CurrentTurn,
+                GameState: _gameCast.GameState,
+                PlayerCount: _gameCast.PlayerCount,
+                GameId: _gameCast.GameId
             );
-            _gameSettings = gameCast.GameSettings;
+            _gameSettings = gameSave.GameSettings;
             
             InitPossibleCells();
         }
         
         public bool GetCommandPossibility(GameCommand command)
         {
-            return _processUpdater.GetCommandPossibility(_processState, _possibleCells, command);
+            return _processUpdater.GetCommandPossibility(_gameCast, _possibleCells, command);
         }
 
         public ImmutableList<GameAction> RunCommand(GameCommand command)
         {
-            var (processState, actions) = _processUpdater.RunCommand(_processState, _possibleCells, command);
-            _processState = processState;
+            var (gameCast, actions) = _processUpdater.RunCommand(_gameCast, _possibleCells, command);
+            _gameCast = gameCast;
             return actions;
         }
 
@@ -95,7 +95,7 @@ namespace Discoverer.Logic.Process
                 grid.Set(coordinate, new MarkerSet(null, ImmutableHashSet<int>.Empty));
             }
 
-            _processState = new ProcessState(
+            _gameCast = new GameCast(
                 ImmutableList<GameAction>.Empty, 
                 grid.ToImmutable(), 
                 0, 
@@ -124,12 +124,12 @@ namespace Discoverer.Logic.Process
 
         public GameState GetGameState()
         {
-            return _processState.GameState;
+            return _gameCast.GameState;
         }
 
         public ImmutableList<GameAction> GetAllActions()
         {
-            return _processState.Actions;
+            return _gameCast.Actions;
         }
         
         public IGrid<Region> GetRegionGrid()
@@ -139,17 +139,17 @@ namespace Discoverer.Logic.Process
         
         public IGrid<MarkerSet> GetMarkerSetGrid()
         {
-            return _processState.MarkerSetGrid.CopyGrid();
+            return _gameCast.MarkerSetGrid.CopyGrid();
         }
 
         public int GetCurrentPlayer()
         {
-            return _processState.CurrentPlayerNum;
+            return _gameCast.CurrentPlayerNum;
         }
 
         public List<Type> GetCurrentPossibleCommands()
         {
-            return _processState.GameState switch
+            return _gameCast.GameState switch
             {
                 GameNotStartedState state => new List<Type> {typeof(StartGameCommand)},
                 PlayerMakesTurnState state => new List<Type> {typeof(AskQuestionCommand), typeof(MakeGuessCommand)},
@@ -162,7 +162,7 @@ namespace Discoverer.Logic.Process
 
         public int GetCurrentTurn()
         {
-            return _processState.CurrentTurn;
+            return _gameCast.CurrentTurn;
         }
 
         public ICoordinate GetGrail()
@@ -190,7 +190,7 @@ namespace Discoverer.Logic.Process
             {
                 _possibleCells.Set(
                     coordinate, 
-                    Enumerable.Range(0, _processState.PlayerCount)
+                    Enumerable.Range(0, _gameCast.PlayerCount)
                         .Select(i => _hintFunctions[_level.Hints[i]](_level.Grid, coordinate))
                         .ToArray()
                 );

@@ -4,7 +4,7 @@ using Discoverer.Logic.Grid;
 
 namespace Discoverer.Logic.Process.Contracts
 {
-    internal class ProcessUpdate
+    internal class UpdateGameCastRequest
     {
         public ImmutableList<GameAction>? Actions { get; set; }
         

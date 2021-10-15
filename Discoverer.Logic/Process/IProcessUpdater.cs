@@ -7,10 +7,10 @@ namespace Discoverer.Logic.Process
 {
     internal interface IProcessUpdater
     {
-        (ProcessState, ImmutableList<GameAction>) RunCommand(ProcessState processState, IGrid<bool[]> possibleCells,
+        (GameCast, ImmutableList<GameAction>) RunCommand(GameCast gameCast, IGrid<bool[]> possibleCells,
             GameCommand command);
         
-        bool GetCommandPossibility(ProcessState processState, IGrid<bool[]> possibleCells,
+        bool GetCommandPossibility(GameCast gameCast, IGrid<bool[]> possibleCells,
             GameCommand command);
     }
 }

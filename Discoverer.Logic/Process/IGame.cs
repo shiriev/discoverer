@@ -8,9 +8,9 @@ namespace Discoverer.Logic.Process
 {
     public interface IGame
     {
-        GameCast SaveState();
+        GameSave SaveState();
 
-        void LoadState(GameCast gameCast);
+        void LoadState(GameSave gameSave);
         
         ImmutableList<GameAction> RunCommand(GameCommand command);
         

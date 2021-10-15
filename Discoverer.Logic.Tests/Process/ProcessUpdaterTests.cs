@@ -45,7 +45,7 @@ namespace Discoverer.Logic.Tests.Process
                         new MarkerSet(null, ImmutableHashSet<int>.Empty));
                 }
                     
-                var defaultProcessState = new ProcessState
+                var defaultProcessState = new GameCast
                 (
                     Actions: ImmutableList<GameAction>.Empty,
                     MarkerSetGrid: defaultMarkerSetGrid.ToImmutable(),
@@ -64,7 +64,7 @@ namespace Discoverer.Logic.Tests.Process
                         new MarkerSet(null, ImmutableHashSet<int>.Empty));
                 }
                 
-                var defaultProcessStateForFourPlayers = new ProcessState
+                var defaultProcessStateForFourPlayers = new GameCast
                 (
                     Actions: ImmutableList<GameAction>.Empty,
                     MarkerSetGrid: defaultMarkerSetGridForFourPlayers.ToImmutable(),
@@ -84,8 +84,8 @@ namespace Discoverer.Logic.Tests.Process
                     defaultProcessState,
                     possibleCells,
                     new StartGameCommand(),
-                    defaultProcessState.Set(
-                        new ProcessUpdate
+                    defaultProcessState.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = actions,
                             GameState = new PlayerPutsImproperCellOnStartState(),
@@ -94,8 +94,8 @@ namespace Discoverer.Logic.Tests.Process
                 );
                 
                 yield return new TestCaseData(
-                    defaultProcessState.Set(
-                        new ProcessUpdate
+                    defaultProcessState.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = new List<GameAction>
                             {
@@ -105,8 +105,8 @@ namespace Discoverer.Logic.Tests.Process
                         }),
                     possibleCells,
                     new PutImproperCellOnStartCommand(new TestCoordinate { I = 1 }),
-                    defaultProcessState.Set(
-                        new ProcessUpdate
+                    defaultProcessState.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = new List<GameAction>
                             {
@@ -123,8 +123,8 @@ namespace Discoverer.Logic.Tests.Process
                     }.ToImmutableList()
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(
-                        new ProcessUpdate
+                    defaultProcessState.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = new List<GameAction>
                             {
@@ -135,8 +135,8 @@ namespace Discoverer.Logic.Tests.Process
                         }),
                     possibleCells,
                     new PutImproperCellOnStartCommand(new TestCoordinate { I = 4 }),
-                    defaultProcessState.Set(
-                        new ProcessUpdate
+                    defaultProcessState.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = new List<GameAction>
                             {
@@ -154,8 +154,8 @@ namespace Discoverer.Logic.Tests.Process
                     }.ToImmutableList()
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(
-                        new ProcessUpdate
+                    defaultProcessState.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = new List<GameAction>
                             {
@@ -167,8 +167,8 @@ namespace Discoverer.Logic.Tests.Process
                         }),
                     possibleCells,
                     new PutImproperCellOnStartCommand(new TestCoordinate { I = 4 }),
-                    defaultProcessState.Set(
-                        new ProcessUpdate
+                    defaultProcessState.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = new List<GameAction>
                             {
@@ -187,8 +187,8 @@ namespace Discoverer.Logic.Tests.Process
                 );
                 
                 yield return new TestCaseData(
-                    defaultProcessState.Set(
-                        new ProcessUpdate
+                    defaultProcessState.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = new List<GameAction>
                             {
@@ -198,8 +198,8 @@ namespace Discoverer.Logic.Tests.Process
                         }),
                     possibleCells,
                     new AskQuestionCommand(1, new TestCoordinate { I = 0 }),
-                    defaultProcessState.Set(
-                        new ProcessUpdate
+                    defaultProcessState.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = new List<GameAction>
                             {
@@ -218,8 +218,8 @@ namespace Discoverer.Logic.Tests.Process
                     }.ToImmutableList()
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(
-                        new ProcessUpdate
+                    defaultProcessState.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = new List<GameAction>
                             {
@@ -229,8 +229,8 @@ namespace Discoverer.Logic.Tests.Process
                         }),
                     possibleCells,
                     new AskQuestionCommand(1, new TestCoordinate { I = 4 }),
-                    defaultProcessState.Set(
-                        new ProcessUpdate
+                    defaultProcessState.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = new List<GameAction>
                             {
@@ -249,8 +249,8 @@ namespace Discoverer.Logic.Tests.Process
                 );
                 
                 yield return new TestCaseData(
-                    defaultProcessState.Set(
-                        new ProcessUpdate
+                    defaultProcessState.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = new List<GameAction>
                             {
@@ -260,8 +260,8 @@ namespace Discoverer.Logic.Tests.Process
                         }),
                     possibleCells,
                     new MakeGuessCommand(new TestCoordinate { I = 4 }),
-                    defaultProcessState.Set(
-                        new ProcessUpdate
+                    defaultProcessState.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = new List<GameAction>
                             {
@@ -279,8 +279,8 @@ namespace Discoverer.Logic.Tests.Process
                     }.ToImmutableList()
                 );
                 yield return new TestCaseData(
-                    defaultProcessStateForFourPlayers.Set(
-                        new ProcessUpdate
+                    defaultProcessStateForFourPlayers.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = new List<GameAction>
                             {
@@ -291,8 +291,8 @@ namespace Discoverer.Logic.Tests.Process
                         }),
                     possibleCellsForFourPlayers,
                     new MakeGuessCommand(new TestCoordinate { I = 1 }),
-                    defaultProcessStateForFourPlayers.Set(
-                        new ProcessUpdate
+                    defaultProcessStateForFourPlayers.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = new List<GameAction>
                             {
@@ -313,8 +313,8 @@ namespace Discoverer.Logic.Tests.Process
                     }.ToImmutableList()
                 );
                 yield return new TestCaseData(
-                    defaultProcessStateForFourPlayers.Set(
-                        new ProcessUpdate
+                    defaultProcessStateForFourPlayers.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = new List<GameAction>
                             {
@@ -325,8 +325,8 @@ namespace Discoverer.Logic.Tests.Process
                         }),
                     possibleCellsForFourPlayers,
                     new MakeGuessCommand(new TestCoordinate { I = 2 }),
-                    defaultProcessStateForFourPlayers.Set(
-                        new ProcessUpdate
+                    defaultProcessStateForFourPlayers.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = new List<GameAction>
                             {
@@ -356,8 +356,8 @@ namespace Discoverer.Logic.Tests.Process
                 );
                 
                 yield return new TestCaseData(
-                    defaultProcessState.Set(
-                        new ProcessUpdate
+                    defaultProcessState.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = new List<GameAction>
                             {
@@ -367,8 +367,8 @@ namespace Discoverer.Logic.Tests.Process
                         }),
                     possibleCells,
                     new PutImproperCellAfterFailCommand(new TestCoordinate { I = 1 }),
-                    defaultProcessState.Set(
-                        new ProcessUpdate
+                    defaultProcessState.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = new List<GameAction>
                             {
@@ -385,8 +385,8 @@ namespace Discoverer.Logic.Tests.Process
                     }.ToImmutableList()
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(
-                        new ProcessUpdate
+                    defaultProcessState.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = new List<GameAction>
                             {
@@ -397,8 +397,8 @@ namespace Discoverer.Logic.Tests.Process
                         }),
                     possibleCells,
                     new PutImproperCellAfterFailCommand(new TestCoordinate { I = 4 }),
-                    defaultProcessState.Set(
-                        new ProcessUpdate
+                    defaultProcessState.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = new List<GameAction>
                             {
@@ -416,8 +416,8 @@ namespace Discoverer.Logic.Tests.Process
                     }.ToImmutableList()
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(
-                        new ProcessUpdate
+                    defaultProcessState.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = new List<GameAction>
                             {
@@ -428,8 +428,8 @@ namespace Discoverer.Logic.Tests.Process
                         }),
                     possibleCells,
                     new PutImproperCellAfterFailCommand(new TestCoordinate { I = 4 }),
-                    defaultProcessState.Set(
-                        new ProcessUpdate
+                    defaultProcessState.Update(
+                        new UpdateGameCastRequest
                         {
                             Actions = new List<GameAction>
                             {
@@ -451,14 +451,14 @@ namespace Discoverer.Logic.Tests.Process
         
         [TestCaseSource(nameof(RunCommandTestData))]
         public void RunCommandTestData_ForTestCases_ReturnsCorrect(
-            object processStateObject, TestGrid<bool[]> possibleCells, GameCommand command, 
+            object gameCastObject, TestGrid<bool[]> possibleCells, GameCommand command, 
             object expectedResultStateObject, ImmutableList<GameAction> expectedActions)
         {
-            var processState = (ProcessState) processStateObject;
-            var expectedResultState = (ProcessState) expectedResultStateObject;
+            var gameCast = (GameCast) gameCastObject;
+            var expectedResultState = (GameCast) expectedResultStateObject;
             var updater = new ProcessUpdater();
 
-            var (resultProcess, actions) = updater.RunCommand(processState, possibleCells, command);
+            var (resultProcess, actions) = updater.RunCommand(gameCast, possibleCells, command);
 
             CollectionAssert.AreEqual(expectedResultState.Actions, resultProcess.Actions);
             Assert.AreEqual(expectedResultState.CurrentPlayerNum, resultProcess.CurrentPlayerNum);
@@ -484,7 +484,7 @@ namespace Discoverer.Logic.Tests.Process
                     new [] { true, false },
                 });
                 
-                var defaultProcessState = new ProcessState
+                var defaultProcessState = new GameCast
                 (
                     Actions: ImmutableList<GameAction>.Empty,
                     MarkerSetGrid: new TestGrid<MarkerSet>(5).ToImmutable(),
@@ -521,38 +521,38 @@ namespace Discoverer.Logic.Tests.Process
                 );
                 
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate { GameState = new PlayerPutsImproperCellOnStartState() }),
+                    defaultProcessState.Update(new UpdateGameCastRequest { GameState = new PlayerPutsImproperCellOnStartState() }),
                     possibleCells,
                     new StartGameCommand(),
                     typeof(ArgumentException)
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate { GameState = new PlayerPutsImproperCellOnStartState() }),
+                    defaultProcessState.Update(new UpdateGameCastRequest { GameState = new PlayerPutsImproperCellOnStartState() }),
                     possibleCells,
                     new AskQuestionCommand(1, new TestCoordinate { I = 1 }),
                     typeof(ArgumentException)
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate { GameState = new PlayerPutsImproperCellOnStartState() }),
+                    defaultProcessState.Update(new UpdateGameCastRequest { GameState = new PlayerPutsImproperCellOnStartState() }),
                     possibleCells,
                     new MakeGuessCommand(new TestCoordinate { I = 1 }),
                     typeof(ArgumentException)
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate { GameState = new PlayerPutsImproperCellOnStartState() }),
+                    defaultProcessState.Update(new UpdateGameCastRequest { GameState = new PlayerPutsImproperCellOnStartState() }),
                     possibleCells,
                     new PutImproperCellAfterFailCommand(new TestCoordinate { I = 1 }),
                     typeof(ArgumentException)
                 );
                 
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate { GameState = new PlayerPutsImproperCellOnStartState() }),
+                    defaultProcessState.Update(new UpdateGameCastRequest { GameState = new PlayerPutsImproperCellOnStartState() }),
                     possibleCells,
                     new PutImproperCellOnStartCommand(new TestCoordinate { I = 4 }),
                     typeof(ArgumentException)
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate
+                    defaultProcessState.Update(new UpdateGameCastRequest
                     {
                         GameState = new PlayerPutsImproperCellOnStartState(),
                         MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 0 }, new MarkerSet(1, ImmutableHashSet<int>.Empty))
@@ -563,32 +563,32 @@ namespace Discoverer.Logic.Tests.Process
                 );
                 
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate { GameState = new PlayerMakesTurnState() }),
+                    defaultProcessState.Update(new UpdateGameCastRequest { GameState = new PlayerMakesTurnState() }),
                     possibleCells,
                     new StartGameCommand(),
                     typeof(ArgumentException)
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate { GameState = new PlayerMakesTurnState() }),
+                    defaultProcessState.Update(new UpdateGameCastRequest { GameState = new PlayerMakesTurnState() }),
                     possibleCells,
                     new PutImproperCellOnStartCommand(new TestCoordinate { I = 0 }),
                     typeof(ArgumentException)
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate { GameState = new PlayerMakesTurnState() }),
+                    defaultProcessState.Update(new UpdateGameCastRequest { GameState = new PlayerMakesTurnState() }),
                     possibleCells,
                     new PutImproperCellAfterFailCommand(new TestCoordinate { I = 0 }),
                     typeof(ArgumentException)
                 );
                 
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate { GameState = new PlayerMakesTurnState() }),
+                    defaultProcessState.Update(new UpdateGameCastRequest { GameState = new PlayerMakesTurnState() }),
                     possibleCells,
                     new AskQuestionCommand(0, new TestCoordinate { I = 0 }),
                     typeof(ArgumentException)
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate
+                    defaultProcessState.Update(new UpdateGameCastRequest
                     {
                         GameState = new PlayerMakesTurnState(),
                         MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 0 }, new MarkerSet(0, ImmutableHashSet<int>.Empty))
@@ -598,7 +598,7 @@ namespace Discoverer.Logic.Tests.Process
                     typeof(ArgumentException)
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate
+                    defaultProcessState.Update(new UpdateGameCastRequest
                     {
                         GameState = new PlayerMakesTurnState(),
                         MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 0 }, new MarkerSet(1, ImmutableHashSet<int>.Empty))
@@ -608,7 +608,7 @@ namespace Discoverer.Logic.Tests.Process
                     typeof(ArgumentException)
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate
+                    defaultProcessState.Update(new UpdateGameCastRequest
                     {
                         GameState = new PlayerMakesTurnState(),
                         MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 0 }, new MarkerSet(null, ImmutableHashSet<int>.Empty.Add(1)))
@@ -618,7 +618,7 @@ namespace Discoverer.Logic.Tests.Process
                     typeof(ArgumentException)
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate
+                    defaultProcessState.Update(new UpdateGameCastRequest
                     {
                         GameState = new PlayerMakesTurnState(),
                         MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 4 }, new MarkerSet(0, ImmutableHashSet<int>.Empty))
@@ -628,7 +628,7 @@ namespace Discoverer.Logic.Tests.Process
                     typeof(ArgumentException)
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate
+                    defaultProcessState.Update(new UpdateGameCastRequest
                     {
                         GameState = new PlayerMakesTurnState(),
                         MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 4 }, new MarkerSet(1, ImmutableHashSet<int>.Empty))
@@ -638,45 +638,45 @@ namespace Discoverer.Logic.Tests.Process
                     typeof(ArgumentException)
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate { GameState = new PlayerMakesTurnState() }),
+                    defaultProcessState.Update(new UpdateGameCastRequest { GameState = new PlayerMakesTurnState() }),
                     possibleCells,
                     new MakeGuessCommand(new TestCoordinate { I = 0 }),
                     typeof(ArgumentException)
                 );
                 
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate { GameState = new PlayerPutsImproperCellAfterFailState() }),
+                    defaultProcessState.Update(new UpdateGameCastRequest { GameState = new PlayerPutsImproperCellAfterFailState() }),
                     possibleCells,
                     new StartGameCommand(),
                     typeof(ArgumentException)
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate { GameState = new PlayerPutsImproperCellAfterFailState() }),
+                    defaultProcessState.Update(new UpdateGameCastRequest { GameState = new PlayerPutsImproperCellAfterFailState() }),
                     possibleCells,
                     new PutImproperCellOnStartCommand(new TestCoordinate { I = 0 }),
                     typeof(ArgumentException)
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate { GameState = new PlayerPutsImproperCellAfterFailState() }),
+                    defaultProcessState.Update(new UpdateGameCastRequest { GameState = new PlayerPutsImproperCellAfterFailState() }),
                     possibleCells,
                     new AskQuestionCommand(1, new TestCoordinate { I = 0 }),
                     typeof(ArgumentException)
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate { GameState = new PlayerPutsImproperCellAfterFailState() }),
+                    defaultProcessState.Update(new UpdateGameCastRequest { GameState = new PlayerPutsImproperCellAfterFailState() }),
                     possibleCells,
                     new MakeGuessCommand(new TestCoordinate { I = 0 }),
                     typeof(ArgumentException)
                 );
                 
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate { GameState = new PlayerPutsImproperCellAfterFailState() }),
+                    defaultProcessState.Update(new UpdateGameCastRequest { GameState = new PlayerPutsImproperCellAfterFailState() }),
                     possibleCells,
                     new PutImproperCellAfterFailCommand(new TestCoordinate { I = 4 }),
                     typeof(ArgumentException)
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate
+                    defaultProcessState.Update(new UpdateGameCastRequest
                     {
                         GameState = new PlayerPutsImproperCellAfterFailState(),
                         MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 0 }, new MarkerSet(0, ImmutableHashSet<int>.Empty))
@@ -686,7 +686,7 @@ namespace Discoverer.Logic.Tests.Process
                     typeof(ArgumentException)
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate
+                    defaultProcessState.Update(new UpdateGameCastRequest
                     {
                         GameState = new PlayerPutsImproperCellAfterFailState(),
                         MarkerSetGrid = defaultProcessState.MarkerSetGrid.CopyWithSet(new TestCoordinate { I = 0 }, new MarkerSet(1, ImmutableHashSet<int>.Empty))
@@ -697,31 +697,31 @@ namespace Discoverer.Logic.Tests.Process
                 );
                 
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate { GameState = new PlayerWinsGameState() }),
+                    defaultProcessState.Update(new UpdateGameCastRequest { GameState = new PlayerWinsGameState() }),
                     possibleCells,
                     new StartGameCommand(),
                     typeof(ArgumentException)
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate { GameState = new PlayerWinsGameState() }),
+                    defaultProcessState.Update(new UpdateGameCastRequest { GameState = new PlayerWinsGameState() }),
                     possibleCells,
                     new PutImproperCellOnStartCommand(new TestCoordinate { I = 0 }),
                     typeof(ArgumentException)
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate { GameState = new PlayerWinsGameState() }),
+                    defaultProcessState.Update(new UpdateGameCastRequest { GameState = new PlayerWinsGameState() }),
                     possibleCells,
                     new PutImproperCellAfterFailCommand(new TestCoordinate { I = 0 }),
                     typeof(ArgumentException)
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate { GameState = new PlayerWinsGameState() }),
+                    defaultProcessState.Update(new UpdateGameCastRequest { GameState = new PlayerWinsGameState() }),
                     possibleCells,
                     new AskQuestionCommand(1, new TestCoordinate { I = 0 }),
                     typeof(ArgumentException)
                 );
                 yield return new TestCaseData(
-                    defaultProcessState.Set(new ProcessUpdate { GameState = new PlayerWinsGameState() }),
+                    defaultProcessState.Update(new UpdateGameCastRequest { GameState = new PlayerWinsGameState() }),
                     possibleCells,
                     new MakeGuessCommand(new TestCoordinate { I = 0 }),
                     typeof(ArgumentException)
@@ -731,13 +731,13 @@ namespace Discoverer.Logic.Tests.Process
         
         [TestCaseSource(nameof(RunCommandErrorsTestData))]
         public void RunCommandTestData_ForTestCases_Throws(
-            object processStateObject, TestGrid<bool[]> possibleCells, GameCommand command, 
+            object gameCastObject, TestGrid<bool[]> possibleCells, GameCommand command, 
             Type expectedExceptionType)
         {
-            var processState = (ProcessState) processStateObject;
+            var gameCast = (GameCast) gameCastObject;
             var updater = new ProcessUpdater();
 
-            Assert.Throws(expectedExceptionType, () => updater.RunCommand(processState, possibleCells, command));
+            Assert.Throws(expectedExceptionType, () => updater.RunCommand(gameCast, possibleCells, command));
         }
     }
 }

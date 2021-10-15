@@ -5,8 +5,7 @@ using Discoverer.Logic.Grid;
 
 namespace Discoverer.Logic.Process.Contracts
 {
-    //TODO: Rename class
-    internal record ProcessState(
+    internal record GameCast(
         ImmutableList<GameAction> Actions,
         IImmutableGrid<MarkerSet> MarkerSetGrid,
         int CurrentPlayerNum,
@@ -16,15 +15,15 @@ namespace Discoverer.Logic.Process.Contracts
         Guid GameId)
     {
 
-        public ProcessState Set(ProcessUpdate update)
+        public GameCast Update(UpdateGameCastRequest updateRequest)
         {
             return new
             (
-                Actions: update.Actions ?? Actions,
-                MarkerSetGrid: update.MarkerSetGrid ?? MarkerSetGrid,
-                CurrentPlayerNum: update.CurrentPlayerNum ?? CurrentPlayerNum,
-                CurrentTurn: update.CurrentTurn ?? CurrentTurn,
-                GameState: update.GameState ?? GameState,
+                Actions: updateRequest.Actions ?? Actions,
+                MarkerSetGrid: updateRequest.MarkerSetGrid ?? MarkerSetGrid,
+                CurrentPlayerNum: updateRequest.CurrentPlayerNum ?? CurrentPlayerNum,
+                CurrentTurn: updateRequest.CurrentTurn ?? CurrentTurn,
+                GameState: updateRequest.GameState ?? GameState,
                 GameId: GameId,
                 PlayerCount: PlayerCount
             );

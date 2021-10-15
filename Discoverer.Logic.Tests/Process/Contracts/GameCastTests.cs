@@ -11,14 +11,14 @@ using NUnit.Framework;
 
 namespace Discoverer.Logic.Tests.Process.Contracts
 {
-    public class ProcessStateTests
+    public class GameCastTests
     {
         public static IEnumerable<TestCaseData> SetTestData
         {
             get
             {
                 var guid = Guid.NewGuid();
-                var firstProcessState = new ProcessState(
+                var firstProcessState = new GameCast(
                     Actions: ImmutableList<GameAction>.Empty,
                     MarkerSetGrid: new TestGrid<MarkerSet>(5).ToImmutable(),
                     CurrentPlayerNum: 0,
@@ -30,18 +30,18 @@ namespace Discoverer.Logic.Tests.Process.Contracts
                 
                 yield return new TestCaseData(
                     firstProcessState,
-                    new ProcessUpdate(),
+                    new UpdateGameCastRequest(),
                     firstProcessState
                 );
                 
                 yield return new TestCaseData(
                     firstProcessState,
-                    new ProcessUpdate()
+                    new UpdateGameCastRequest()
                     {
                         Actions = ImmutableList<GameAction>.Empty.Add(new GameStartedAction()),
                         CurrentPlayerNum = 1
                     },
-                    new ProcessState(
+                    new GameCast(
                         Actions: ImmutableList<GameAction>.Empty.Add(new GameStartedAction()),
                         MarkerSetGrid: new TestGrid<MarkerSet>(5).ToImmutable(),
                         CurrentPlayerNum: 1,
@@ -54,7 +54,7 @@ namespace Discoverer.Logic.Tests.Process.Contracts
                 
                 yield return new TestCaseData(
                     firstProcessState,
-                    new ProcessUpdate()
+                    new UpdateGameCastRequest()
                     {
                         MarkerSetGrid = new TestGrid<MarkerSet>(5)
                             .ToImmutable()
@@ -62,7 +62,7 @@ namespace Discoverer.Logic.Tests.Process.Contracts
                         CurrentTurn = 1,
                         GameState = new PlayerMakesTurnState()
                     },
-                    new ProcessState(
+                    new GameCast(
                         Actions: ImmutableList<GameAction>.Empty,
                         MarkerSetGrid: new TestGrid<MarkerSet>(5)
                             .ToImmutable()
@@ -78,13 +78,13 @@ namespace Discoverer.Logic.Tests.Process.Contracts
         }
 
         [TestCaseSource(nameof(SetTestData))]
-        public void Set_ForTestCases_ReturnCorrectObject(object processStateObject, object processUpdateObject, object expectedObject)
+        public void Set_ForTestCases_ReturnCorrectObject(object gameCastObject, object updateGameCastRequestObject, object expectedObject)
         {
-            var processState = (ProcessState) processStateObject;
-            var processUpdate = (ProcessUpdate) processUpdateObject;
-            var expected = (ProcessState) expectedObject;
+            var gameCast = (GameCast) gameCastObject;
+            var updateGameCastRequest = (UpdateGameCastRequest) updateGameCastRequestObject;
+            var expected = (GameCast) expectedObject;
             
-            var actual = processState.Set(processUpdate);
+            var actual = gameCast.Update(updateGameCastRequest);
 
             Assert.AreEqual(expected.Actions, actual.Actions);
             CollectionAssert.AreEqual(expected.MarkerSetGrid.Items, actual.MarkerSetGrid.Items);

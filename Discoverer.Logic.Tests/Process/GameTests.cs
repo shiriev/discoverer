@@ -31,7 +31,7 @@ namespace Discoverer.Logic.Tests.Process
                 };
                 
                 yield return new TestCaseData(
-                    new ProcessState
+                    new GameCast
                     (
                         Actions: ImmutableList<GameAction>.Empty,
                         MarkerSetGrid: new TestGrid<MarkerSet>(5).ToImmutable(),
@@ -47,9 +47,9 @@ namespace Discoverer.Logic.Tests.Process
         }
         
         [TestCaseSource(nameof(SaveStateTestData))]
-        public void SaveState_ForTestCases_ThrowsOrNot(object processStateObject, Type expectedExceptionType)
+        public void SaveState_ForTestCases_ThrowsOrNot(object gameCastObject, Type expectedExceptionType)
         {
-            var processState = (ProcessState) processStateObject;
+            var gameCast = (GameCast) gameCastObject;
             //var process = new GameProcess();
 
 

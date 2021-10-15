@@ -6,7 +6,7 @@ using Discoverer.Logic.Settings;
 
 namespace Discoverer.Logic.Contracts
 {
-    public class GameCast
+    public class GameSave
     {
         public ImmutableGrid<Region> Grid { get; set; }
         
