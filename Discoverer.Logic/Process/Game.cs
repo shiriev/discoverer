@@ -51,22 +51,23 @@ namespace Discoverer.Logic.Process
             };
         }
 
+        //TODO: Add test
         public void LoadState(GameSave gameSave)
         {
             _level = new Level
             {
-                Grid = _level.Grid,
-                Hints = _level.Hints,
-                Grail = _level.Grail
+                Grid = gameSave.Grid,
+                Hints = gameSave.Hints,
+                Grail = gameSave.Grail
             };
             _gameCast = new GameCast(
-                Actions: _gameCast.Actions,
-                MarkerSetGrid: _gameCast.MarkerSetGrid,
-                CurrentPlayerNum: _gameCast.CurrentPlayerNum,
-                CurrentTurn: _gameCast.CurrentTurn,
-                GameState: _gameCast.GameState,
-                PlayerCount: _gameCast.PlayerCount,
-                GameId: _gameCast.GameId
+                Actions: gameSave.Actions,
+                MarkerSetGrid: gameSave.MarkerSetGrid,
+                CurrentPlayerNum: gameSave.CurrentPlayerNum,
+                CurrentTurn: gameSave.CurrentTurn,
+                GameState: gameSave.GameState,
+                PlayerCount: gameSave.PlayerCount,
+                GameId: gameSave.GameId
             );
             _gameSettings = gameSave.GameSettings;
             
@@ -147,17 +148,10 @@ namespace Discoverer.Logic.Process
             return _gameCast.CurrentPlayerNum;
         }
 
-        public List<Type> GetCurrentPossibleCommands()
+        public List<(EGameCommand CommandType, List<GameCommand> Commands)> GetCurrentPossibleCommands()
         {
-            return _gameCast.GameState switch
-            {
-                GameNotStartedState state => new List<Type> {typeof(StartGameCommand)},
-                PlayerMakesTurnState state => new List<Type> {typeof(AskQuestionCommand), typeof(MakeGuessCommand)},
-                PlayerPutsImproperCellOnStartState state => new List<Type> {typeof(PutImproperCellOnStartCommand)},
-                PlayerPutsImproperCellAfterFailState state => new List<Type> {typeof(PutImproperCellAfterFailCommand)},
-                PlayerWinsGameState state => new List<Type> { },
-                _ => throw new Exception() // TODO: Change exception
-            };
+            // TODO: Split command logic to different classes by command type
+            return _gameStateUpdater.GetCurrentPossibleCommands(_gameCast, _possibleCells);
         }
 
         public int GetCurrentTurn()

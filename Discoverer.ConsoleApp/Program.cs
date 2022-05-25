@@ -76,14 +76,22 @@ namespace Discoverer.ConsoleApp
             Console.ReadLine();
         }
 
-        static GameCommand? BuildCommand(List<Type> possibleCommands, EGridType gridType)
+        static GameCommand? BuildCommand(List<(EGameCommand CommandType, List<GameCommand> Commands)> possibleCommands, EGridType gridType)
         {
-            foreach (var possibleCommand in possibleCommands)
+            foreach (var (type, commands) in possibleCommands)
             {
-                Console.WriteLine(possibleCommand.Name);
+                Console.WriteLine(Enum.GetName(type));
             }
 
-            var commandString = Console.ReadLine();
+            var possibleTypes = possibleCommands.Select(p => p.CommandType).ToHashSet();
+
+            string? commandString;
+
+            do
+            {
+                commandString = Console.ReadLine();
+            } while (commandString is null);
+
             var parts = commandString.Split(" ");
             return parts[0] switch
             {
@@ -94,10 +102,10 @@ namespace Discoverer.ConsoleApp
                     ? new HexCoordinate { X = int.Parse(parts[1]), Y = int.Parse(parts[2]) }
                     : new IsometricCoordinate { X = int.Parse(parts[1]), Y = int.Parse(parts[2]) }),
                 "start" => new StartGameCommand(),
-                "put" when possibleCommands.Contains(typeof(PutImproperCellOnStartCommand)) => new PutImproperCellOnStartCommand(gridType == EGridType.Hex 
+                "put" when possibleTypes.Contains(EGameCommand.PutImproperCellOnStart) => new PutImproperCellOnStartCommand(gridType == EGridType.Hex 
                     ? new HexCoordinate { X = int.Parse(parts[1]), Y = int.Parse(parts[2]) }
                     : new IsometricCoordinate { X = int.Parse(parts[1]), Y = int.Parse(parts[2]) }),
-                "put" when possibleCommands.Contains(typeof(PutImproperCellAfterFailCommand)) => new PutImproperCellAfterFailCommand(gridType == EGridType.Hex 
+                "put" when possibleTypes.Contains(EGameCommand.PutImproperCellAfterFail) => new PutImproperCellAfterFailCommand(gridType == EGridType.Hex 
                     ? new HexCoordinate { X = int.Parse(parts[1]), Y = int.Parse(parts[2]) }
                     : new IsometricCoordinate { X = int.Parse(parts[1]), Y = int.Parse(parts[2]) }),
                 _ => null

@@ -5,6 +5,7 @@ using System.Linq;
 using Discoverer.Logic.Contracts;
 using Discoverer.Logic.Contracts.Actions;
 using Discoverer.Logic.Contracts.Commands;
+using Discoverer.Logic.Contracts.Enums;
 using Discoverer.Logic.Contracts.GameStates;
 using Discoverer.Logic.Grid;
 using Discoverer.Logic.Process.Contracts;
@@ -52,6 +53,33 @@ namespace Discoverer.Logic.Process
             }
         }
 
+        public List<(EGameCommand CommandType, List<GameCommand> Commands)> GetCurrentPossibleCommands(GameCast gameCast, IGrid<bool[]> possibleCells)
+        {
+            // TODO: Split command logic to different classes by command type
+            return gameCast.GameState switch
+            {
+                GameNotStartedState state => new List<(EGameCommand CommandType, List<GameCommand> Commands)>
+                {
+                    (EGameCommand.StartGame, GetPossibleStartGameCommands(gameCast))
+                },
+                PlayerMakesTurnState state => new List<(EGameCommand CommandType, List<GameCommand> Commands)>
+                {
+                    (EGameCommand.AskQuestion, GetPossibleAskQuestionCommands(gameCast)), 
+                    (EGameCommand.MakeGuess, GetPossibleMakeGuessCommands(gameCast, possibleCells)),
+                },
+                PlayerPutsImproperCellOnStartState state => new List<(EGameCommand CommandType, List<GameCommand> Commands)>
+                {
+                    (EGameCommand.PutImproperCellOnStart, GetPossiblePutImproperCellOnStartCommands(gameCast, possibleCells)),
+                },
+                PlayerPutsImproperCellAfterFailState state => new List<(EGameCommand CommandType, List<GameCommand> Commands)>
+                {
+                    (EGameCommand.PutImproperCellAfterFail, GetPossiblePutImproperCellAfterFailCommands(gameCast, possibleCells)),
+                },
+                PlayerWinsGameState state => new List<(EGameCommand CommandType, List<GameCommand> Commands)> { },
+                _ => throw new Exception() // TODO: Change exception
+            };
+        }
+
         private static (GameCast, ImmutableList<GameAction>) RunStartGameCommandOnGameNotStartedState(GameCast gameCast, IGrid<bool[]> possibleCells, StartGameCommand command)
         {
             var actions = ImmutableList<GameAction>.Empty.Add(new GameStartedAction());
@@ -68,6 +96,7 @@ namespace Discoverer.Logic.Process
         {
             if (possibleCells.Get(command.Coordinate)[gameCast.CurrentPlayerNum] == true)
             {
+                // TODO: Update exception descriptions
                 throw new ArgumentException($"Player cannot put just one improper cell on possible cell ({command.Coordinate})", nameof(command));
             }
             
@@ -282,6 +311,54 @@ namespace Discoverer.Logic.Process
                     GameState = new PlayerMakesTurnState(),
                 }),
                 actions.ToImmutableList());
+        }
+
+        private static List<GameCommand> GetPossibleStartGameCommands(GameCast gameCast)
+        {
+            return new List<GameCommand> { new StartGameCommand() };
+        }
+        private static List<GameCommand> GetPossibleAskQuestionCommands(GameCast gameCast)
+        {
+            return Enumerable.Range(0, gameCast.PlayerCount)
+                .Where(p => p != gameCast.CurrentPlayerNum)
+                .SelectMany(p => 
+                    gameCast.MarkerSetGrid.Items
+                        .Where(cell => !cell.Item2.ImproperCellForPlayer.HasValue)
+                        .Where(cell => !cell.Item2.PossibleCellForPlayers.Contains(p))
+                        .Select(cell => new AskQuestionCommand(p, cell.Item1) as GameCommand))
+                .ToList();
+            
+            // return gameCast.MarkerSetGrid.Items
+            //     .Select(tuple => tuple.Item2)
+            //     .Where(m => !m.ImproperCellForPlayer.HasValue)
+            //     .SelectMany(m => m.PossibleCellForPlayers)
+        }
+
+        private static List<GameCommand> GetPossibleMakeGuessCommands(GameCast gameCast, IGrid<bool[]> possibleCells)
+        {
+            return gameCast.MarkerSetGrid.Items
+                .Where(cell => !cell.Item2.ImproperCellForPlayer.HasValue)
+                .Where(cell => possibleCells.Get(cell.Item1)[gameCast.CurrentPlayerNum] == true)
+                .Select(cell => new MakeGuessCommand(cell.Item1) as GameCommand)
+                .ToList();
+        }
+        
+        private static List<GameCommand> GetPossiblePutImproperCellOnStartCommands(GameCast gameCast, IGrid<bool[]> possibleCells)
+        {
+            return gameCast.MarkerSetGrid.Items
+                .Where(cell => !cell.Item2.ImproperCellForPlayer.HasValue)
+                .Where(cell => possibleCells.Get(cell.Item1)[gameCast.CurrentPlayerNum] == false)
+                .Select(cell => new PutImproperCellOnStartCommand(cell.Item1) as GameCommand)
+                .ToList();
+        }
+        
+        private static List<GameCommand> GetPossiblePutImproperCellAfterFailCommands(GameCast gameCast, IGrid<bool[]> possibleCells)
+        {
+            return gameCast.MarkerSetGrid.Items
+                .Where(cell => !cell.Item2.ImproperCellForPlayer.HasValue)
+                .Where(cell => possibleCells.Get(cell.Item1)[gameCast.CurrentPlayerNum] == false)
+                .Select(cell => new PutImproperCellAfterFailCommand(cell.Item1) as GameCommand)
+                .ToList();
         }
     }
 }

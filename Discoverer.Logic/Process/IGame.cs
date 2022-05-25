@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Discoverer.Logic.Contracts;
+using Discoverer.Logic.Contracts.Enums;
 using Discoverer.Logic.Grid;
 
 namespace Discoverer.Logic.Process
@@ -24,6 +25,6 @@ namespace Discoverer.Logic.Process
         
         int GetCurrentTurn();
         
-        List<Type> GetCurrentPossibleCommands();
+        List<(EGameCommand CommandType, List<GameCommand> Commands)> GetCurrentPossibleCommands();
     }
 }
