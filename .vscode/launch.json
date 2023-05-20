@@ -1,0 +1,44 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Discoverer.ConsoleApp",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build Discoverer.ConsoleApp",
+            "program": "${workspaceFolder}/Discoverer.ConsoleApp/bin/Debug/net6.0/Discoverer.ConsoleApp.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "externalTerminal"
+        },
+        {
+            "name": "Discoverer.Api",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build Discoverer.Api",
+            "program": "${workspaceFolder}/Discoverer.Api/bin/Debug/net6.0/Discoverer.Api.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Discoverer.Api",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            }
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach"
+        }
+    ]
+}
